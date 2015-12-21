@@ -350,11 +350,13 @@ app.post('/api/refresh', function(req,res) { //refresh situation
 	var survivors= JSON.parse(fs.readFileSync("survivors-list.txt")); //S= JSON.parse(fs.readFileSync('S.txt'));
 	var sname= req.cookies.sname;
 
+	survivors[sname]= 10; //задаємо маркер присутності (він з кожним тиком буде зменшуватися)
+	fs.writeFileSync('survivors-list.txt', JSON.stringify(survivors)); //зберігаємо маркер соєї присутності
+
 	var others= {}; //інші виживаки
 	for (var key in survivors) { //перебираємо інших виживак
 		if ( key==sname ) { //якщо це Я
-			survivors[key]= 10; //задаємо маркер присутності (він з кожним тиком буде зменшуватися)
-			fs.writeFileSync('survivors-list.txt', JSON.stringify(survivors)); //зберігаємо маркер соєї присутності
+			//nop
 		} else if ( survivors[key] ) { //якщо це не Я і якщо виживака online
 			//console.log(key);
 
@@ -420,12 +422,15 @@ setInterval(function() {
 
 
 	if (survivorsCount) {//if at least one S is active
+
+		console.log(survivorsCount);//x
+
 		O= JSON.parse(fs.readFileSync('O.txt'));
 		for (var i= 1; i<H; i++) {
 			for (var j= 0; j<W; j++) {
 				if ( O[i][j]==="G" && O[i-1][j]===" " ) {
-					var p_G= 0.1;
-					if ( O[i][j-1]==="G" || O[i][j+1]==="G" ) {
+					var p_G= 0.5; //ймовірність впасти
+					if ( O[i][j-1]==="G" && O[i-1][j-1]==="G" || O[i][j+1]==="G" && O[i-1][j+1]==="G" ) {
 						p_G= 0.001;
 					}
 					if (Math.random()<=p_G) {
