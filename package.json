@@ -1,0 +1,25 @@
+{
+  "name": "survaka",
+  "version": "0.0.2",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/andrewtatomyr/survaka.git"
+  },
+  "author": "andrew tatomyr",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/andrewtatomyr/survaka/issues"
+  },
+  "homepage": "https://github.com/andrewtatomyr/survaka#readme",
+  "dependencies": {
+    "express": "*",
+    "body-parser": "*",
+    "jade": "*",
+    "cookie-parser": "*"
+  }
+}
