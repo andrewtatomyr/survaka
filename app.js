@@ -20,7 +20,7 @@ var fs= require('fs');
 var
 	H= 10,
 	W= 10,
-	tick= 250,
+	tick= 500,
 	t= 7*60*1000;
 
 /*var*/ O= JSON.parse(fs.readFileSync('O.txt'));
@@ -280,8 +280,8 @@ app.post('/api/refresh', function(req,res) { //refresh situation
 	//---------------------------r-e-v-i-e-w---m-a-s-k---------------------------(
 
 
-	var allowReview= ' HPT*+'; //!
-	var reviewRange= 10;//yet
+	var allowReview= ' HPT+*'; //!
+	var reviewRange= 9;//yet
 	//var PI= 4;
 
 	var reviewMask= actionMask;
@@ -335,139 +335,31 @@ app.post('/api/refresh', function(req,res) { //refresh situation
 
 		}
 
-		/*/
-		//REVERSE:
-		for (var r= 2; r<=reviewRange; r++) { //проходимо по променю
-			var fi= (2*PI*reviewRange-s)/reviewRange;
-			var i= square(fi,r).y, j= square(fi,r).x;
-			var i_prev= square(fi,r-1).y, j_prev= square(fi,r-1).x;
-			var doorLooking= ""; //d
-			if ( fi===0 || fi===PI ) doorLooking= "-"; //d
-			if ( fi===PI/2 || fi===3*PI/2 ) doorLooking= "|"; //d
-			if ( S.y+i>=0 && S.y+i<H && S.x+j>=0 && S.x+j<W ) { //щоб не вийти за межі...
-				if (
-					reviewMask.indexOf("["+(S.y+i_prev)+"|"+(S.x+j_prev)+"]")>-1
-					&& ( allowReview.indexOf(O[S.y+i_prev][S.x+j_prev])>-1 || doorLooking.indexOf(O[S.y+i_prev][S.x+j_prev])>-1 )
-				) {
-					reviewMask+= "["+(S.y+i)+"|"+(S.x+j)+"]";
-				}
-			}
-		}
-		//:REVERSE
-		// */
-
-
 	}
 
 	//---------------------------r-e-v-i-e-w---m-a-s-k---------------------------)
 
 
-	/* /?
-	//---------------------------a-c-t-i-o-n---m-a-s-k---------------------------(
-
-
-	var allowAction= " H";
-
-	var actionMask= '['+(S.y)+'|'+(S.x-1)+']'
-		+'['+(S.y)+'|'+(S.x+1)+']'
-		+'['+(S.y+1)+'|'+(S.x)+']'
-		+'['+(S.y-1)+'|'+(S.x)+']';
-	if ( allowAction.indexOf(O[S.y][S.x-1])>-1 || allowAction.indexOf(O[S.y-1][S.x])>-1 )
-		actionMask+= '['+(S.y-1)+'|'+(S.x-1)+']';
-	if ( allowAction.indexOf(O[S.y][S.x+1])>-1 || allowAction.indexOf(O[S.y-1][S.x])>-1 )
-		actionMask+= '['+(S.y-1)+'|'+(S.x+1)+']';
-	if ( allowAction.indexOf(O[S.y][S.x-1])>-1 || allowAction.indexOf(O[S.y+1][S.x])>-1 )
-		actionMask+= '['+(S.y+1)+'|'+(S.x-1)+']';
-	if ( allowAction.indexOf(O[S.y][S.x+1])>-1 || allowAction.indexOf(O[S.y+1][S.x])>-1 )
-		actionMask+= '['+(S.y+1)+'|'+(S.x+1)+']';
-	//---------------------------a-c-t-i-o-n---m-a-s-k---------------------------)
-
-
-	//---------------------------r-e-v-i-e-w---m-a-s-k---------------------------(
-
-
-	var allowReview= ' H';
-	var reviewRange= 10;//yet
-	//var PI= 4;
-
-	var reviewMask= '['+(S.y)+'|'+(S.x)+']'; //actionMask;
-
-	for (var i= 1; i<=reviewRange; i++) { //прохдимо по дузі
-		if ( S.y+i>=0 && S.y+i<H ) { //щоб не вийти за межі...
-			if ( reviewMask.indexOf("["+(S.y+i-1)+"|"+(S.x+0)+"]")>-1 && allowReview.indexOf(O[S.y+i-1][S.x+0])>-1 || i-1===0 ) {
-				reviewMask+= "["+(S.y+i)+"|"+(S.x+0)+"]";
-				for (var j= 1; j<=reviewRange; j++) { //проходимо по променю
 
 
 
 
-					if ( S.x+j>=0 && S.x+j<W ) { //щоб не вийти за межі...
-						if ( reviewMask.indexOf("["+(S.y+i)+"|"+(S.x+j-1)+"]")>-1 && allowReview.indexOf(O[S.y+i][S.x+j-1])>-1 ) {
-							reviewMask+= "["+(S.y+i)+"|"+(S.x+j)+"]";
-						}
-					}
-
-					if ( S.x-j>=0 && S.x-j<W ) { //щоб не вийти за межі...
-						if ( reviewMask.indexOf("["+(S.y+i)+"|"+(S.x-j+1)+"]")>-1 && allowReview.indexOf(O[S.y+i][S.x-j+1])>-1 ) {
-							reviewMask+= "["+(S.y+i)+"|"+(S.x-j)+"]";
-						}
-					}
-
-
-
-
-				}
-			}
-		}
-
-		if ( S.y-i>=0 && S.y-i<H ) { //щоб не вийти за межі...
-			if ( reviewMask.indexOf("["+(S.y-i+1)+"|"+(S.x+0)+"]")>-1 && allowReview.indexOf(O[S.y-i+1][S.x+0])>-1 || -i+1===0 ) {
-				reviewMask+= "["+(S.y-i)+"|"+(S.x+0)+"]";
-				for (var j= 1; j<=reviewRange; j++) { //проходимо по променю
-
-
-
-
-					if ( S.x+j>=0 && S.x+j<W ) { //щоб не вийти за межі...
-						if ( reviewMask.indexOf("["+(S.y-i)+"|"+(S.x+j-1)+"]")>-1 && allowReview.indexOf(O[S.y-i][S.x+j-1])>-1 ) {
-							reviewMask+= "["+(S.y-i)+"|"+(S.x+j)+"]";
-						}
-					}
-
-					if ( S.x-j>=0 && S.x-j<W ) { //щоб не вийти за межі...
-						if ( reviewMask.indexOf("["+(S.y-i)+"|"+(S.x-j+1)+"]")>-1 && allowReview.indexOf(O[S.y-i][S.x-j+1])>-1 ) {
-							reviewMask+= "["+(S.y-i)+"|"+(S.x-j)+"]";
-						}
-					}
-
-
-
-
-				}
-			}
-		}
-
-	}
-
-	//---------------------------r-e-v-i-e-w---m-a-s-k---------------------------)
-	// */
-
-
-
-
-
-	//--------------------------------o-t-h-e-r-s--------------------------------(
+	//-------------------------o-t-h-e-r-s-&-o-n-l-i-n-e-------------------------(
 
 
 	var survivors= JSON.parse(fs.readFileSync("survivors-list.txt")); //S= JSON.parse(fs.readFileSync('S.txt'));
 	var sname= req.cookies.sname;
 
-	var others= {};
-	for (var key in survivors) {
-		if (key!==sname) {
+	var others= {}; //інші виживаки
+	for (var key in survivors) { //перебираємо інших виживак
+		if ( key==sname ) { //якщо це Я
+			survivors[key]= 10; //задаємо маркер присутності (він з кожним тиком буде зменшуватися)
+			fs.writeFileSync('survivors-list.txt', JSON.stringify(survivors)); //зберігаємо маркер соєї присутності
+		} else if ( survivors[key] ) { //якщо це не Я і якщо виживака online
 			//console.log(key);
 
 			S_other= JSON.parse(fs.readFileSync("S-"+key+".txt")); //S= JSON.parse(fs.readFileSync('S.txt'));
+
 			others[key]= {
 				"face": S_other.face,
 				"y": S_other.y,
@@ -477,8 +369,8 @@ app.post('/api/refresh', function(req,res) { //refresh situation
 			}
 		}
 	}
+	//-------------------------o-t-h-e-r-s-&-o-n-l-i-n-e-------------------------)
 
-	//--------------------------------o-t-h-e-r-s--------------------------------)
 
 
 
@@ -517,11 +409,37 @@ setInterval(function() {
 	t+= tick;
 
 
-	//if at least one S is active
+	var survivors= JSON.parse(fs.readFileSync("survivors-list.txt")); //S= JSON.parse(fs.readFileSync('S.txt'));
+	var survivorsCount= 0;
+	for (var key in survivors) {
+		survivors[key]--;
+		if (survivors[key]<0) survivors[key]= 0;
+		survivorsCount+= (survivors[key]>0)? 1: 0;
+	}
+	fs.writeFileSync('survivors-list.txt', JSON.stringify(survivors));
 
 
+	if (survivorsCount) {//if at least one S is active
+		O= JSON.parse(fs.readFileSync('O.txt'));
+		for (var i= 1; i<H; i++) {
+			for (var j= 0; j<W; j++) {
+				if ( O[i][j]==="G" && O[i-1][j]===" " ) {
+					var p_G= 0.1;
+					if ( O[i][j-1]==="G" || O[i][j+1]==="G" ) {
+						p_G= 0.001;
+					}
+					if (Math.random()<=p_G) {
+						console.log("v",j,i);
+						O[i-1][j]= O[i][j];
+						O[i][j]= " ";
+					}
+
+				}
+			}
+		}
+		fs.writeFileSync('O.txt', JSON.stringify(O));//?
+	}
 	//fs.writeFileSync('S.txt', JSON.stringify(S));//?
-	//fs.writeFileSync('O.txt', JSON.stringify(O));//?
 
 	//console.log(t);
 
