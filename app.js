@@ -21,8 +21,8 @@ var fs= require('fs');
 //var
 	//H= 10, //->chunks
 	//W= 10, //->chunks
-	tick= 500;
-	t= 7*60*1000;
+tick= 500;
+t= 7*60*1000;
 
 /*var*/ //O= JSON.parse(fs.readFileSync('O.txt'));
 var O= JSON.parse(fs.readFileSync('chunks.txt'));
@@ -57,9 +57,9 @@ app.get('/api/start-param', function(req,res) { //забрати нафіг!
 
 	//завантажувати відповідно до координати
 	//O= JSON.parse(fs.readFileSync("O.txt"));
-	var O= JSON.parse(fs.readFileSync("chunks.txt"));//!?
+	//var O= JSON.parse(fs.readFileSync("chunks.txt"));//!?
 
-	res.json({ /*dispH: dispH, dispW: dispW,*/ tick: tick, O: O, S: S });//?
+	res.json({  dispH,  dispW,  tick/*, O: O, S: S*/,S });//?
 });
 
 
@@ -375,7 +375,7 @@ app.post('/api/refresh', function(req,res) { //refresh situation
 
 	//console.log( Math.round(t/1000) );//x
 
-	res.json({ dispH: dispH, dispW: dispW, O: O, S: S, actionMask: actionMask, reviewMask: reviewMask, others: others, t: t });
+	res.json({      O,  S,  actionMask,  reviewMask,  others,  t });
 
 	//----------------------------------f-a-l-l----------------------------------(
 

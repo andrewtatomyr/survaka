@@ -63,16 +63,16 @@ function choose(n) {
 
 	console.log('page was load');
 
-	$.getJSON('/api/start-param', function(data) {//забрати нафіг!
+	$.getJSON('/api/start-param', function(initData) {//це мусить тут бути. фактично, це ініціалізація входу суб'єкта S
 		//H= data.H;
 		//W= data.W;
-		O= data.O; //? //об'єкти (світ)
-		S= data.S; //? //суб'єкт ... як їх зробити множинними? щоб могло ,,жити'' декілька одночасно...
+		//O= data.O; //? //об'єкти (світ)
+		S= initData.S; //? //суб'єкт ... як їх зробити множинними? щоб могло ,,жити'' декілька одночасно...
+		dispH= initData.dispH;
+		dispW= initData.dispW;
 
 
-
-
-		tick= data.tick;
+		tick= initData.tick;
 		//tick= 1000;//x
 
 		$("#tick").text(""+tick+"⌛");
@@ -108,8 +108,8 @@ function choose(n) {
 					/*var*/ dispX= 7; //поки що висоту відображаємо повністю //задаємо поки постійне значення вручну
 
 					//build world:
-					for (var i=0;i<data.dispH;i++) {
-						for (var j=0;j<data.dispW*2;j++) {//!!!*2
+					for (var i=0;i<dispH;i++) {
+						for (var j=0;j<dispW;j++) {//!!!*2
 							var cell= $('#c'+i+'-'+j);
 							//cell.text(O[i][j]).removeClass("active"); //у кожну клітинку: (а) виводимо, шо в ній знаходиться; (б) видаляємо поки що ознаку ,,активності"
 
