@@ -18,6 +18,8 @@ function actionHandler(event) {
 }
 
 function manipulate(cell, element) {
+	//console.log(cell);//x
+	cell.j= cell.j + S.x-dispX;//!
 	if (element.className==="active") {
 		S.manipulate= cell;
 	}
@@ -27,12 +29,13 @@ function manipulate(cell, element) {
 
 
 	var R= Math.max(Math.abs(cell.i-S.y),Math.abs(cell.j-S.x));
+	console.log(cell, R);//x
 	var ssq_fi= (cell.i-S.y)/R,
 		csq_fi= (cell.j-S.x)/R;
 	for (var r= 1; r<=R; r++) {
 
-		var i= S.y+Math.round(ssq_fi*r),
-			j= Math.round(S.x+csq_fi*r);
+		var i= Math.round(S.y+ssq_fi*r),
+			j= Math.round(dispX+csq_fi*r);
 
 		$('#c'+i+'-'+j).text("%");
 		console.log("%",r,i,j)
@@ -48,6 +51,12 @@ function choose(n) {
 	console.log(S);//x
 }
 
+//const:
+//var dispH= 10, dispW= 15;
+
+
+
+
 //------------------------------o-n---r-e-a-d-y--------------------------------(
 (function() {
 
@@ -55,8 +64,8 @@ function choose(n) {
 	console.log('page was load');
 
 	$.getJSON('/api/start-param', function(data) {//забрати нафіг!
-		H= data.H;
-		W= data.W;
+		//H= data.H;
+		//W= data.W;
 		O= data.O; //? //об'єкти (світ)
 		S= data.S; //? //суб'єкт ... як їх зробити множинними? щоб могло ,,жити'' декілька одночасно...
 
@@ -86,21 +95,29 @@ function choose(n) {
 				success: function(data) {
 					//get data:
 					O= data.O;
+					Q= O.Q;
+					H= O.H;
+					W= O.W;
 					S= data.S;
 					var actionMask= data.actionMask;
 					var reviewMask= data.reviewMask;
 					var others= data.others; //o
 					t= data.t;
+					//dispH
+
+					/*var*/ dispX= 7; //поки що висоту відображаємо повністю //задаємо поки постійне значення вручну
 
 					//build world:
-					for (var i=0;i<H;i++) {
-						for (var j=0;j<W;j++) {
+					for (var i=0;i<data.dispH;i++) {
+						for (var j=0;j<data.dispW*2;j++) {//!!!*2
 							var cell= $('#c'+i+'-'+j);
 							//cell.text(O[i][j]).removeClass("active"); //у кожну клітинку: (а) виводимо, шо в ній знаходиться; (б) видаляємо поки що ознаку ,,активності"
 
+
+							var jAbs= j + S.x-dispX;
 							//!
-							var q= Math.floor(j/W);//!
-							var J= j-q*W;//!
+							var q= Math.floor(jAbs/W);//!
+							var J= jAbs-q*W;//!
 							q= (q%O.Q+O.Q)%O.Q;//!
 							//!
 
@@ -109,13 +126,13 @@ function choose(n) {
 
 
 
-							if ( actionMask.indexOf( '['+i+'|'+j+']' )>-1 ) {
+							if ( actionMask.indexOf( '['+i+'|'+jAbs+']' )>-1 ) {
 								/*/
 								cell.text(cell.text()+'.'); //помічаємо активні блоки (з якими теоретично можна взаємодіяти) крапочками
 								// */
 								cell.addClass( "active" ); //event вішати треба тільки ОДИН РАЗ! тому присвоюємо активним блокам відповідний клас, а уже по класу орієнтуємося в хендлері
 							}
-							if ( reviewMask.indexOf( '['+i+'|'+j+']' )===-1 ) {
+							if ( reviewMask.indexOf( '['+i+'|'+jAbs+']' )===-1 ) {
 								/*/
 								cell.text("?"); //помічаємо блоки, які НЕ ,,бачить'' персонаж
 								// */
@@ -126,13 +143,16 @@ function choose(n) {
 
 					//put others ☻:
 					for (var key in others) {
-						if ( $('#c'+others[key].y+'-'+others[key].x).text()!=="?" ) {
-							$('#c'+others[key].y+'-'+others[key].x).html( others[key].face + "<sup>"+others[key].tool+"</sup>" ); //o
+						//if ( $('#c'+others[key].y+'-'+others[key].x).text()!=="?" ) {
+						if ( $('#c'+others[key].y+'-'+(others[key].x-S.x+dispX)).text()!=="?" ) {
+							$('#c'+others[key].y+'-'+(others[key].x-S.x+dispX)).html( others[key].face + "<sup>"+others[key].tool+"</sup>" ); //o
+							//$('#c'+others[key].y+'-'+others[key].x).html( others[key].face + "<sup>"+others[key].tool+"</sup>" ); //o
 						}
 					}
 
 					//and at last put self ☻:
-					$('#c'+S.y+'-'+S.x).html( S.face + "<sup>"+S.I[S.I[0]]+"</sup>" );
+					$('#c'+S.y+'-'+dispX).html( S.face + "<sup>"+S.I[S.I[0]]+"</sup>" );
+					//$('#c'+S.y+'-'+S.x).html( S.face + "<sup>"+S.I[S.I[0]]+"</sup>" );
 					$("#coordinates").text(S.x+"|"+S.y);
 
 

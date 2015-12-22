@@ -30,7 +30,8 @@ H= O.H;
 W= O.W;
 Q= O.Q;
 console.log(O);
-
+var dispH= H;
+var dispW= 15;
 
 var survivors= JSON.parse(fs.readFileSync("survivors-list.txt"));
 console.log(survivors);
@@ -44,7 +45,8 @@ app.get('/', function (req, res) { //start
 });
 
 app.get('/world', function (req, res) { //start
-	res.render('world.jade', { H: H, W: W});
+
+	res.render('world.jade', { dispH: dispH, dispW: dispW});
 });
 
 
@@ -57,7 +59,7 @@ app.get('/api/start-param', function(req,res) { //забрати нафіг!
 	//O= JSON.parse(fs.readFileSync("O.txt"));
 	var O= JSON.parse(fs.readFileSync("chunks.txt"));//!?
 
-	res.json({ H: H, W: W, tick: tick, O: O, S: S });//?
+	res.json({ /*dispH: dispH, dispW: dispW,*/ tick: tick, O: O, S: S });//?
 });
 
 
@@ -241,10 +243,11 @@ app.post('/api/refresh', function(req,res) { //refresh situation
 	if ( things[ O[lateral.q][S.y][lateral.J] ].passHorizontal ) { //?
 	//if ( things[ O[S.y][S.x+S.dx] ].passHorizontal ) { //?
 		S.x= lateral.j;
+		S.q= lateral.q;
 		//S.x+= S.dx;
 	}
 
-	if ( S.dx || S.dy ) console.log("dy:",S.dy,"dx:",S.dx);
+	if ( S.dx || S.dy ) console.log("q:",S.q,"dy:",S.dy,"dx:",S.dx);//x
 	//at last:
 	S.dy= 0;
 	S.dx= 0;
@@ -372,7 +375,7 @@ app.post('/api/refresh', function(req,res) { //refresh situation
 
 	//console.log( Math.round(t/1000) );//x
 
-	res.json({ /*H: H, W: W,*/ O: O, S: S, actionMask: actionMask, reviewMask: reviewMask, others: others, t: t });
+	res.json({ dispH: dispH, dispW: dispW, O: O, S: S, actionMask: actionMask, reviewMask: reviewMask, others: others, t: t });
 
 	//----------------------------------f-a-l-l----------------------------------(
 

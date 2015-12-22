@@ -89,7 +89,7 @@ var things= {
 
 		"P": [1,"w","P"],
 		"/": [0.5,"w","/"],
-		" ": [0.2," ","g"]
+		" ": [0.2," ","w"]
 	},
 	"w": {
 		name: "uninstalled wood plank",

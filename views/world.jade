@@ -11,9 +11,9 @@ html
 
 		div()
 			table( border=1 cellspacing=0 class="shell" )
-				- for (var i=H-1; i>=0; i--) {
+				- for (var i=dispH-1; i>=0; i--) {
 					tr
-						- for (var j=0; j<W; j++) {
+						- for (var j=0; j<dispW; j++) {
 							td(id="c"+i+"-"+j onclick="manipulate({ i:"+i+", j:"+j+" }, this)" )
 						- }
 				- }
