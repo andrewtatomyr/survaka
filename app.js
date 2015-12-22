@@ -64,10 +64,32 @@ for (var s= 0; s<2*squared.PI*(rrr); s++) { //прохдимо по дузі
 // */
 //-----------------------s-q-u-a-r-e---t-r-i-g-o-n-o-m-e-t-r-y-----------------)
 
+var things= require("./things.js");
+console.log(things);//x
+
+function manipulate(i,j,n/*S,O*/) {
+	console.log(j+"|"+i+": ["+S.I[n]+"] -> ["+O[i][j]+"]");//x
+
+	var thing= things[ O[i][j] ], tool= S.I[n];
+	if ( tool in thing ) {
+		console.log("p="+thing[tool][0]);//x
+
+		if ( Math.random()<thing[tool][0] ) {
+			O[i][j]= thing[tool][1]; //thing[tool].inWorld;
+			S.I[n]= thing[tool][2]; //thing[tool].inHands;
+
+		}
+
+		//тут прописати ймовірність поломки інструмента
+
+	}
+	S.fullness-= 1;
+	S.manipulate= "";//?
+}
 
 
+/*
 function manipulate(i,j,n) {
-
 	var t_o= S.I[n]+O[i][j];
 	console.log(">",t_o);//x
 	var t_o_=t_o;
@@ -75,31 +97,21 @@ function manipulate(i,j,n) {
 		//change
 		case " -": t_o_= " |"; S.fullness-= 0.5; break;
 		case " |": t_o_= " -"; S.fullness-= 0.5; break;
-
 		//take&put
 		case " G": t_o_= "g "; S.fullness-= 3; break;
 		case "g ": t_o_= " G"; S.fullness-= 3; break;
-
-
 		case "h ": t_o_= " H"; S.fullness-= 2; break;
 		case " H": t_o_= "h "; S.fullness-= 2; break;
-
 		case "+ ": t_o_= " |"; S.fullness-= 2; break;
-
-
 		//crush
 		case "TG": t_o_= "Tg"; S.fullness-= 0.7; break;
 		case "P-": t_o_= "P+"; S.fullness-= 0.5; break;
 		case "P|": t_o_= "P+"; S.fullness-= 0.5; break;
 		case "PH": t_o_= "Ph"; S.fullness-= 0.5; break;
-
 		//drop
 		case "P ": t_o_= " P"; S.fullness-= 3; break;
 		case "T ": t_o_= " T"; S.fullness-= 3; break;
 		case "* ": t_o_= " *"; S.fullness-= 3; break;
-
-
-
 		//pick up
 		case " +": t_o_= "+ "; S.fullness-= 0.7; break;
 		case " h": t_o_= "h "; S.fullness-= 0.5; break;
@@ -107,17 +119,14 @@ function manipulate(i,j,n) {
 		case " *": t_o_= "* "; S.fullness-= 0.3; break;
 		case " P": t_o_= "P "; S.fullness-= 0.3; break;
 		case " T": t_o_= "T "; S.fullness-= 0.3; break;
-
-
 		default: ;//x
-
 	}
 	//console.log(t_o_);//x
-
 	S.I[n]= t_o_[0];
 	O[i][j]= t_o_[1];
 	S.manipulate= "";
 }
+*/
 
 function selfAction(n) {
 
@@ -280,7 +289,7 @@ app.post('/api/refresh', function(req,res) { //refresh situation
 	//---------------------------r-e-v-i-e-w---m-a-s-k---------------------------(
 
 
-	var allowReview= ' HPT+*'; //!
+	var allowReview= ' HPTD+*hg'; //!
 	var reviewRange= 9;//yet
 	//var PI= 4;
 
@@ -423,18 +432,19 @@ setInterval(function() {
 
 	if (survivorsCount) {//if at least one S is active
 
-		console.log(survivorsCount);//x
+		//console.log(survivorsCount);//x
 
 		O= JSON.parse(fs.readFileSync('O.txt'));
 		for (var i= 1; i<H; i++) {
 			for (var j= 0; j<W; j++) {
+				//зробити універсальним
 				if ( O[i][j]==="G" && O[i-1][j]===" " ) {
 					var p_G= 0.5; //ймовірність впасти
 					if ( O[i][j-1]==="G" && O[i-1][j-1]==="G" || O[i][j+1]==="G" && O[i-1][j+1]==="G" ) {
 						p_G= 0.001;
 					}
 					if (Math.random()<=p_G) {
-						console.log("v",j,i);
+						console.log("v",j,i);//x
 						O[i-1][j]= O[i][j];
 						O[i][j]= " ";
 					}
