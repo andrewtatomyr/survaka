@@ -54,11 +54,11 @@ function choose(n) {
 
 	console.log('page was load');
 
-	$.getJSON('/api/start-param', function(data) {
+	$.getJSON('/api/start-param', function(data) {//забрати нафіг!
 		H= data.H;
 		W= data.W;
-		O= data.O; //об'єкти (світ)
-		S= data.S; //суб'єкт ... як їх зробити множинними? щоб могло ,,жити'' декілька одночасно...
+		O= data.O; //? //об'єкти (світ)
+		S= data.S; //? //суб'єкт ... як їх зробити множинними? щоб могло ,,жити'' декілька одночасно...
 
 
 
@@ -96,7 +96,19 @@ function choose(n) {
 					for (var i=0;i<H;i++) {
 						for (var j=0;j<W;j++) {
 							var cell= $('#c'+i+'-'+j);
-							cell.text(O[i][j]).removeClass("active"); //у кожну клітинку: (а) виводимо, шо в ній знаходиться; (б) видаляємо поки що ознаку ,,активності"
+							//cell.text(O[i][j]).removeClass("active"); //у кожну клітинку: (а) виводимо, шо в ній знаходиться; (б) видаляємо поки що ознаку ,,активності"
+
+							//!
+							var q= Math.floor(j/W);//!
+							var J= j-q*W;//!
+							q= (q%O.Q+O.Q)%O.Q;//!
+							//!
+
+							cell.text(O[q][i][J]).removeClass("active"); //! ~//у кожну клітинку: (а) виводимо, шо в ній знаходиться; (б) видаляємо поки що ознаку ,,активності"
+
+
+
+
 							if ( actionMask.indexOf( '['+i+'|'+j+']' )>-1 ) {
 								/*/
 								cell.text(cell.text()+'.'); //помічаємо активні блоки (з якими теоретично можна взаємодіяти) крапочками
@@ -121,6 +133,8 @@ function choose(n) {
 
 					//and at last put self ☻:
 					$('#c'+S.y+'-'+S.x).html( S.face + "<sup>"+S.I[S.I[0]]+"</sup>" );
+					$("#coordinates").text(S.x+"|"+S.y);
+
 
 					//inventory:? why dont working??????
 					for (var n=1; n<=9; n++) {

@@ -17,13 +17,18 @@ app.use(cookieParser());
 
 var fs= require('fs');
 //------------------------------------------------------
-var
-	H= 10,
-	W= 10,
-	tick= 500,
+
+//var
+	//H= 10, //->chunks
+	//W= 10, //->chunks
+	tick= 500;
 	t= 7*60*1000;
 
-/*var*/ O= JSON.parse(fs.readFileSync('O.txt'));
+/*var*/ //O= JSON.parse(fs.readFileSync('O.txt'));
+var O= JSON.parse(fs.readFileSync('chunks.txt'));
+H= O.H;
+W= O.W;
+Q= O.Q;
 console.log(O);
 
 
@@ -43,12 +48,16 @@ app.get('/world', function (req, res) { //start
 });
 
 
-app.get('/api/start-param', function(req,res) { //
+app.get('/api/start-param', function(req,res) { //забрати нафіг!
 	console.log("Cookies: ", req.cookies);//x
-	O= JSON.parse(fs.readFileSync("O.txt"));
 	S= JSON.parse(fs.readFileSync("S-"+req.cookies.sname+".txt"));
 	console.log(S); //x
-	res.json({ H: H, W: W, tick: tick, O: O, S: S });
+
+	//завантажувати відповідно до координати
+	//O= JSON.parse(fs.readFileSync("O.txt"));
+	var O= JSON.parse(fs.readFileSync("chunks.txt"));//!?
+
+	res.json({ H: H, W: W, tick: tick, O: O, S: S });//?
 });
 
 
@@ -64,18 +73,21 @@ for (var s= 0; s<2*squared.PI*(rrr); s++) { //прохдимо по дузі
 // */
 //-----------------------s-q-u-a-r-e---t-r-i-g-o-n-o-m-e-t-r-y-----------------)
 
+//-------------------------------m-a-n-i-p-u-l-a-t-e---------------------------(
 var things= require("./things.js");
 console.log(things);//x
 
-function manipulate(i,j,n/*S,O*/) {
-	console.log(j+"|"+i+": ["+S.I[n]+"] -> ["+O[i][j]+"]");//x
+function manipulate(i,j,n) {
 
-	var thing= things[ O[i][j] ], tool= S.I[n];
+	var rel= relative(j,W,Q); //!
+	console.log(j+"|"+i+": ["+S.I[n]+"] -> ["+O[rel.q][i][rel.J]+"]");//x
+
+	var thing= things[ O[rel.q][i][rel.J] ], tool= S.I[n];
 	if ( tool in thing ) {
 		console.log("p="+thing[tool][0]);//x
 
 		if ( Math.random()<thing[tool][0] ) {
-			O[i][j]= thing[tool][1]; //thing[tool].inWorld;
+			O[rel.q][i][rel.J]= thing[tool][1]; //thing[tool].inWorld;
 			S.I[n]= thing[tool][2]; //thing[tool].inHands;
 
 		}
@@ -83,50 +95,12 @@ function manipulate(i,j,n/*S,O*/) {
 		//тут прописати ймовірність поломки інструмента
 
 	}
-	S.fullness-= 1;
+	S.fullness-= 1;//?
 	S.manipulate= "";//?
 }
+//-------------------------------m-a-n-i-p-u-l-a-t-e---------------------------)
 
 
-/*
-function manipulate(i,j,n) {
-	var t_o= S.I[n]+O[i][j];
-	console.log(">",t_o);//x
-	var t_o_=t_o;
-	switch (t_o) {
-		//change
-		case " -": t_o_= " |"; S.fullness-= 0.5; break;
-		case " |": t_o_= " -"; S.fullness-= 0.5; break;
-		//take&put
-		case " G": t_o_= "g "; S.fullness-= 3; break;
-		case "g ": t_o_= " G"; S.fullness-= 3; break;
-		case "h ": t_o_= " H"; S.fullness-= 2; break;
-		case " H": t_o_= "h "; S.fullness-= 2; break;
-		case "+ ": t_o_= " |"; S.fullness-= 2; break;
-		//crush
-		case "TG": t_o_= "Tg"; S.fullness-= 0.7; break;
-		case "P-": t_o_= "P+"; S.fullness-= 0.5; break;
-		case "P|": t_o_= "P+"; S.fullness-= 0.5; break;
-		case "PH": t_o_= "Ph"; S.fullness-= 0.5; break;
-		//drop
-		case "P ": t_o_= " P"; S.fullness-= 3; break;
-		case "T ": t_o_= " T"; S.fullness-= 3; break;
-		case "* ": t_o_= " *"; S.fullness-= 3; break;
-		//pick up
-		case " +": t_o_= "+ "; S.fullness-= 0.7; break;
-		case " h": t_o_= "h "; S.fullness-= 0.5; break;
-		case " g": t_o_= "g "; S.fullness-= 1.2; break;
-		case " *": t_o_= "* "; S.fullness-= 0.3; break;
-		case " P": t_o_= "P "; S.fullness-= 0.3; break;
-		case " T": t_o_= "T "; S.fullness-= 0.3; break;
-		default: ;//x
-	}
-	//console.log(t_o_);//x
-	S.I[n]= t_o_[0];
-	O[i][j]= t_o_[1];
-	S.manipulate= "";
-}
-*/
 
 function selfAction(n) {
 
@@ -186,6 +160,15 @@ function healhAndFullness() {
 
 }
 
+function relative(j,W,Q) { //відносна координата по горизонталі
+	var q= Math.floor(j/W);
+	var J= j-q*W;
+	q= (q%Q+Q)%Q;
+	jNew= q*W+J;
+	return { J:J, q:q, j:jNew };
+}
+
+
 //-------------------------------r-e-f-r-e-s-h---------------------------------(
 app.post('/api/refresh', function(req,res) { //refresh situation
 
@@ -195,7 +178,13 @@ app.post('/api/refresh', function(req,res) { //refresh situation
 	S.dx= 1*req.body.dx;
 	S.I[0]= 1*req.body.n;
 
+	/*
 	O= JSON.parse(fs.readFileSync('O.txt'));
+	*/
+	 O= JSON.parse(fs.readFileSync("chunks.txt"));
+	//O= chunks
+
+
 
 	if (req.body.cell) { //manipulate
 		manipulate( req.body.cell.i , req.body.cell.j , S.I[0] );
@@ -239,25 +228,20 @@ app.post('/api/refresh', function(req,res) { //refresh situation
 
 
 
-	/*
-	var passVertical= "";
-	for (key in things) {
-		if (things[key].passVertical) passVertical+= ""+key;
-	}*/
+	var rel= relative(S.x,W,Q);
+	//console.log(rel,O);//x
 
-	/*var //!
-		passHorizontal= " -HPT+*",
-		passVertical= " |HPT+*",
-		support= "G-H0123456789", //doNotSupport= " |",
-		hold= "H";*/
-
-	if ( things[ O[S.y+S.dy][S.x] ].passVertical && ( things[ O[S.y-1][S.x] ].support || things[ O[S.y][S.x] ].hold ) ) { //?
-	//if ( passVertical.indexOf(O[S.y+S.dy][S.x])>-1 && ( support.indexOf(O[S.y-1][S.x])>-1 || hold.indexOf(O[S.y][S.x])>-1 ) ) { //doNotSupport.indexOf(O[S.y-1][S.x])===-1
+	if ( things[ O[rel.q][S.y+S.dy][rel.J] ].passVertical && ( things[ O[rel.q][S.y-1][rel.J] ].support || things[ O[rel.q][S.y][rel.J] ].hold ) ) { //?
+	//if ( things[ O[S.y+S.dy][S.x] ].passVertical && ( things[ O[S.y-1][S.x] ].support || things[ O[S.y][S.x] ].hold ) ) { //?
 		S.y+= S.dy;
 	}
-	if ( things[ O[S.y][S.x+S.dx] ].passHorizontal ) { //?
-	//if ( passHorizontal.indexOf(O[S.y][S.x+S.dx])>-1 ) {
-		S.x+= S.dx;
+
+	var	lateral= relative(S.x+S.dx,W,Q);
+
+	if ( things[ O[lateral.q][S.y][lateral.J] ].passHorizontal ) { //?
+	//if ( things[ O[S.y][S.x+S.dx] ].passHorizontal ) { //?
+		S.x= lateral.j;
+		//S.x+= S.dx;
 	}
 
 	if ( S.dx || S.dy ) console.log("dy:",S.dy,"dx:",S.dx);
@@ -273,9 +257,9 @@ app.post('/api/refresh', function(req,res) { //refresh situation
 
 	//---------------------------a-c-t-i-o-n---m-a-s-k---------------------------(
 
+	//у які координати це перевести???????????
 
 	//var allowAction= " H"; //' -|H'; //! //таки дозволю ламати ,,закриті'' блоки по діагоналі- по аналогії як у reviewMask
-
 	var actionMask= '['+(S.y)+'|'+(S.x-1)+']'
 		+'['+(S.y)+'|'+(S.x+1)+']'
 		+'['+(S.y+1)+'|'+(S.x)+']'
@@ -293,12 +277,11 @@ app.post('/api/refresh', function(req,res) { //refresh situation
 
 	//---------------------------r-e-v-i-e-w---m-a-s-k---------------------------(
 
-
 	var allowReview= ' HPTD+*hg'; //!
 	var reviewRange= 9;//yet
-	//var PI= 4;
 
 	var reviewMask= actionMask;
+	/* //потім доробити. можливо, навіть зробити як я думав - видимість як замкнута фігура.
 
 	for (var s= 0; s<2*squared.PI*reviewRange; s++) { //прохдимо по дузі
 		for (var r= 2; r<=reviewRange; r++) { //проходимо по променю
@@ -309,11 +292,7 @@ app.post('/api/refresh', function(req,res) { //refresh situation
 
 
 			var doorLooking= ""; //d
-			/*
-			if ( Math.abs(i-i_prev)===1 ) doorLooking= "|";//
-			if ( Math.abs(j-j_prev)===1 ) doorLooking= "-";//
-			if (doorLooking==="|-") doorLooking= "";//
-			*/
+
 			if ( fi===0 || fi===squared.PI ) doorLooking= "-"; //d
 			if ( fi===squared.PI/2 || fi===3*squared.PI/2 ) doorLooking= "|"; //d
 
@@ -344,13 +323,13 @@ app.post('/api/refresh', function(req,res) { //refresh situation
 				}
 			}
 			//:REVERSE2
-			// */
+			//
 
 
 		}
 
 	}
-
+	*/
 	//---------------------------r-e-v-i-e-w---m-a-s-k---------------------------)
 
 
@@ -397,20 +376,21 @@ app.post('/api/refresh', function(req,res) { //refresh situation
 
 	//----------------------------------f-a-l-l----------------------------------(
 
-
+	var rel= relative(S.x,W,Q);//!?
 	///var doNotSupport= ' |'; //!
-	if ( things[ O[S.y][S.x] ].hold || things[ O[S.y-1][S.x] ].support ) {
+	if ( things[ O[rel.q][S.y][rel.J] ].hold || things[ O[rel.q][S.y-1][rel.J] ].support ) {
 		//nop
 	} else {//falling //doNotSupport.indexOf(O[S.y-1][S.x])>-1
 		//if ( hold.indexOf(O[S.y][S.x])===-1 && support.indexOf(O[S.y-1][S.x])===-1 ) { //falling //doNotSupport.indexOf(O[S.y-1][S.x])>-1
-		console.log("fall down", things[ O[S.y][S.x] ].hold, things[ O[S.y-1][S.x] ].support );//x
+		console.log("fall down" );//x
 		S.y--;
 		//fs.writeFileSync('S.txt', JSON.stringify(S));//?
 	}
 
 
 	fs.writeFileSync("S-"+req.cookies.sname+".txt", JSON.stringify(S));//?
-	fs.writeFileSync('O.txt', JSON.stringify(O));//?
+	//fs.writeFileSync('O.txt', JSON.stringify(O));//?
+	fs.writeFileSync('chunks.txt', JSON.stringify(O));//?
 
 	//fs.writeFile("S.txt", JSON.stringify(S), function() {	});//?
 	//fs.writeFile("O.txt", JSON.stringify(O), function() {	});//?
@@ -437,55 +417,64 @@ setInterval(function() {
 	}
 	fs.writeFileSync('survivors-list.txt', JSON.stringify(survivors));
 
-
+	/* */
 	if (survivorsCount) {//if at least one S is active
 
 		//console.log(survivorsCount);//x
 
-		O= JSON.parse(fs.readFileSync('O.txt'));
-		for (var i= 1; i<H; i++) {
-			for (var j= 1; j<9; j++) {//x
-			/*for (var j= 0; j<W; j++) {*/
-				//зробити універсальним
+		var O= JSON.parse(fs.readFileSync('chunks.txt'));
 
-				var thing= things[ O[i][j] ];
-				//if (thing===" ") continue; //якщо повітря - пропускаємо
-				if ( O[i][j]===" " || thing.fixed || things[ O[i-1][j] ].support || things[ O[i-1][j] ].fixed ) {
-					//блок залишається на місці
-				} else {
+		//тут треба вибрати активні чанки
 
-					if (
-						thing.adhesive //block has own adhesive property
-						&& (
-							things[ O[i][j-1] ].adhesive && ( things[ O[i][j-1] ].fixed || things[ O[i-1][j-1] ].support || things[ O[i-1][j-1] ].fixed ) //left "semi-support"
-							|| things[ O[i][j+1] ].adhesive && ( things[ O[i][j+1] ].fixed || things[ O[i-1][j+1] ].support || things[ O[i-1][j+1] ].fixed ) //right "semi-support"
-							//|| (things[ O[i][j+1] ].fixed || things[ O[i][j+1] ].support && things[ O[i-1][j+1] ].support) //right "semi-support" //O[i][j+1]==="G" && O[i-1][j+1]==="G"
-						)
-					) { //lateral semi-support
-						pFall= 0.001; //ймовірність впасти
+		for (var q=0; q<Q; q++) { //для всіх (поки що) чанків
+			for (var i= 1; i<H; i++) {
+				//for (var j= 1; j<9; j++) {//x
+				for (var j= 0; j<W; j++) {
+					//зробити універсальним
 
-						if (Math.random()<=pFall) { //no any kind of support
-							console.log(pFall,O[i][j],"↓",j,(i-1),O[i-1][j] );//x
-							O[i-1][j]= O[i][j];
-							O[i][j]= " ";
+					var thing= things[ O[q][i][j] ];
+					//if (thing===" ") continue; //якщо повітря - пропускаємо
+					if ( O[q][i][j]===" " || thing.fixed || things[ O[q][i-1][j] ].support || things[ O[q][i-1][j] ].fixed ) {
+						//блок залишається на місці
+					} else {
+
+						var relL= relative(q*W+j-1,W,Q),
+				 			relR= relative(q*W+j+1,W,Q);
+
+						if (
+							thing.adhesive //block has own adhesive property
+							&& (
+							 	things[ O[relL.q][i][relL.J] ].adhesive && ( things[ O[relL.q][i][relL.J] ].fixed || things[ O[relL.q][i-1][relL.J] ].support || things[ O[relL.q][i-1][relL.J] ].fixed ) //left "semi-support"
+								|| things[ O[relR.q][i][relR.J] ].adhesive && ( things[ O[relR.q][i][relR.J] ].fixed || things[ O[relR.q][i-1][relR.J] ].support || things[ O[relR.q][i-1][relR.J] ].fixed ) //right "semi-support"
+								//|| (things[ O[i][j+1] ].fixed || things[ O[i][j+1] ].support && things[ O[i-1][j+1] ].support) //right "semi-support" //O[i][j+1]==="G" && O[i-1][j+1]==="G"
+							)
+						) { //lateral semi-support
+							pFall= 0.001; //ймовірність впасти
+
+							if (Math.random()<=pFall) { //no any kind of support
+								console.log(pFall,O[q][i][j],"↓",j,(i-1),O[q][i-1][j] );//x
+								O[q][i-1][j]= O[q][i][j];
+								O[q][i][j]= " ";
+							}
+
+						} else { //certain fall
+							console.log("certain",O[q][i][j],"↓",j,(i-1),O[q][i-1][j] );//x
+							O[q][i-1][j]= O[q][i][j];
+							O[q][i][j]= " ";
 						}
 
-					} else { //certain fall
-						console.log("certain",O[i][j],"↓",j,(i-1),O[i-1][j] );//x
-						O[i-1][j]= O[i][j];
-						O[i][j]= " ";
+
 					}
-
-
 				}
 			}
+			fs.writeFileSync('chunks.txt', JSON.stringify(O));//?
 		}
-		fs.writeFileSync('O.txt', JSON.stringify(O));//?
+
 	}
 	//fs.writeFileSync('S.txt', JSON.stringify(S));//?
 
 	//console.log(t);
-
+	/* */
 
 }, tick);
 //----------------------p-a-s-s-i-v-e---r-e-f-r-e-s-h--------------------------)
