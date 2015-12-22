@@ -436,18 +436,38 @@ setInterval(function() {
 
 		O= JSON.parse(fs.readFileSync('O.txt'));
 		for (var i= 1; i<H; i++) {
-			for (var j= 0; j<W; j++) {
+			for (var j= 1; j<9; j++) {//x
+			/*for (var j= 0; j<W; j++) {*/
 				//зробити універсальним
-				if ( O[i][j]==="G" && O[i-1][j]===" " ) {
-					var p_G= 0.5; //ймовірність впасти
-					if ( O[i][j-1]==="G" && O[i-1][j-1]==="G" || O[i][j+1]==="G" && O[i-1][j+1]==="G" ) {
-						p_G= 0.001;
-					}
-					if (Math.random()<=p_G) {
-						console.log("v",j,i);//x
+
+				var thing= things[ O[i][j] ];
+				//if (thing===" ") continue; //якщо повітря - пропускаємо
+				if ( O[i][j]===" " || thing.fixed || things[ O[i-1][j] ].support || things[ O[i-1][j] ].fixed ) {
+					//блок залишається на місці
+				} else {
+					//console.log(j,i," : ",O[i][j] ,  O[i-1][j] );//x
+
+					if (
+						thing.support //block has own adhesive property "support"
+						&& (
+							(things[ O[i][j-1] ].fixed || things[ O[i][j-1] ].support && things[ O[i-1][j-1] ].support) //left "semi-support"
+							|| (things[ O[i][j+1] ].fixed || things[ O[i][j+1] ].support && things[ O[i-1][j+1] ].support) //right "semi-support" //O[i][j+1]==="G" && O[i-1][j+1]==="G"
+						)
+					) { //lateral semi-support
+						pFall= 0.001; //ймовірність впасти
+
+						if (Math.random()<=pFall) { //no any kind of support
+							console.log(pFall,j,i,"↓",O[i][j]);//x
+							O[i-1][j]= O[i][j];
+							O[i][j]= " ";
+						}
+
+					} else { //certain fall
+						console.log("certain",j,i,"↓",O[i][j]);//x
 						O[i-1][j]= O[i][j];
 						O[i][j]= " ";
 					}
+
 
 				}
 			}

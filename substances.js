@@ -3,7 +3,7 @@
 
 
 
-var things= {
+var substances= {
 	//space (put into all the things what can be layed out):
 	" ": {
 		name: "space",
