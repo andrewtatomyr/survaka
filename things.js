@@ -15,6 +15,7 @@ var things= {
 		"g": [1,"G"," "],
 		"h": [1,"H"," "],
 		"*": [1,"*"," "],
+		"w": [1,"W"," "],
 
 		"P": [1,"P"," "],
 		"T": [1,"T"," "],
@@ -63,6 +64,9 @@ var things= {
 	"G": {
 		name: "ground",
 		support: 1,
+		adhesive: 1,
+		strength: 20,
+
 
 		"D": [1,"g","D"],
 		"/": [0.5,"g","/"],
@@ -72,10 +76,28 @@ var things= {
 		name: "piece of ground",
 		passVertical: 1,
 		passHorizontal: 1,
-		probOfTake: 1,
 		allowReview: 1,
+		strength: 10,
 
 		" ": [1," ","g"]
+	},
+	"W": {
+		name: "wood plank",
+		fixed: 1,
+		support: 1,
+		adhesive: 1,
+
+		"P": [1,"w","P"],
+		"/": [0.5,"w","/"],
+		" ": [0.2," ","g"]
+	},
+	"w": {
+		name: "uninstalled wood plank",
+		passVertical: 1,
+		passHorizontal: 1,
+		allowReview: 1,
+
+		" ": [1," ","w"]
 	},
 	"|": {
 		name: "vertical door",
@@ -143,31 +165,33 @@ var things= {
 	},
 
 	//adminium:
-	"0": { fixed: 1 },
-	"1": { fixed: 1 },
-	"2": { fixed: 1 },
-	"3": { fixed: 1 },
-	"4": { fixed: 1 },
-	"5": { fixed: 1 },
-	"6": { fixed: 1 },
-	"7": { fixed: 1 },
-	"8": { fixed: 1 },
-	"9": { fixed: 1 },
+	"0": { fixed: 1, support:1 },
+	"1": { fixed: 1, support:1 },
+	"2": { fixed: 1, support:1 },
+	"3": { fixed: 1, support:1 },
+	"4": { fixed: 1, support:1 },
+	"5": { fixed: 1, support:1 },
+	"6": { fixed: 1, support:1 },
+	"7": { fixed: 1, support:1 },
+	"8": { fixed: 1, support:1 },
+	"9": { fixed: 1, support:1 },
 
 
 
 	//template:
 	"": {
 		name: "",
-		fixed: 1,
+		fixed: 1, //предмет не падає, а навпаки - кріпиться до будь-чого
 		passVertical: 1,
 		passHorizontal: 1,
-		support: 1, //це дуже важливий параметр - він визначає не лише підтримку згори,
-								//а й бічну (lateral) напів-підтримку (прилипання),
-								//а також чи сам цей блок може "прилипати" (до інших з параметром support)
-		hold: 1,
-		allowReview: 1,
-		energyValue: 30,
+		support: 1, // визначає  підтримку знизу
+		adhesive: 1,	// бічнa (lateral) напів-підтримкa (прилипання),
+									//а також чи сам цей блок може "прилипати" (до інших з параметром adhesive)
+		hold: 1, //утримує (ladder)
+		allowReview: 1, //крізь предмет можна дивитися
+		strength: 10, //це на потім - при падінні предмет з більшим thing.strength заміщає предмет з меншим.
+									//якщо вони рівні, то падіння (можливо) не відбувається
+		energyValue: 30, //харчова цінність
 
 		"tool": ["probabilityOfInteraction","inWorld","inHands"],
 		" ": [1,"inWorld","inHands"]

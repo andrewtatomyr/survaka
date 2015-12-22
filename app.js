@@ -239,19 +239,24 @@ app.post('/api/refresh', function(req,res) { //refresh situation
 
 
 
+	/*
+	var passVertical= "";
+	for (key in things) {
+		if (things[key].passVertical) passVertical+= ""+key;
+	}*/
 
-
-
-	var //!
+	/*var //!
 		passHorizontal= " -HPT+*",
 		passVertical= " |HPT+*",
 		support= "G-H0123456789", //doNotSupport= " |",
-		hold= "H";
+		hold= "H";*/
 
-	if ( passVertical.indexOf(O[S.y+S.dy][S.x])>-1 && ( support.indexOf(O[S.y-1][S.x])>-1 || hold.indexOf(O[S.y][S.x])>-1 ) ) { //doNotSupport.indexOf(O[S.y-1][S.x])===-1
+	if ( things[ O[S.y+S.dy][S.x] ].passVertical && ( things[ O[S.y-1][S.x] ].support || things[ O[S.y][S.x] ].hold ) ) { //?
+	//if ( passVertical.indexOf(O[S.y+S.dy][S.x])>-1 && ( support.indexOf(O[S.y-1][S.x])>-1 || hold.indexOf(O[S.y][S.x])>-1 ) ) { //doNotSupport.indexOf(O[S.y-1][S.x])===-1
 		S.y+= S.dy;
 	}
-	if ( passHorizontal.indexOf(O[S.y][S.x+S.dx])>-1 ) {
+	if ( things[ O[S.y][S.x+S.dx] ].passHorizontal ) { //?
+	//if ( passHorizontal.indexOf(O[S.y][S.x+S.dx])>-1 ) {
 		S.x+= S.dx;
 	}
 
@@ -394,10 +399,13 @@ app.post('/api/refresh', function(req,res) { //refresh situation
 
 
 	///var doNotSupport= ' |'; //!
-	if ( hold.indexOf(O[S.y][S.x])===-1 && support.indexOf(O[S.y-1][S.x])===-1 ) { //falling //doNotSupport.indexOf(O[S.y-1][S.x])>-1
+	if ( things[ O[S.y][S.x] ].hold || things[ O[S.y-1][S.x] ].support ) {
+		//nop
+	} else {//falling //doNotSupport.indexOf(O[S.y-1][S.x])>-1
+		//if ( hold.indexOf(O[S.y][S.x])===-1 && support.indexOf(O[S.y-1][S.x])===-1 ) { //falling //doNotSupport.indexOf(O[S.y-1][S.x])>-1
+		console.log("fall down", things[ O[S.y][S.x] ].hold, things[ O[S.y-1][S.x] ].support );//x
 		S.y--;
 		//fs.writeFileSync('S.txt', JSON.stringify(S));//?
-		console.log("fall down");
 	}
 
 
@@ -445,25 +453,25 @@ setInterval(function() {
 				if ( O[i][j]===" " || thing.fixed || things[ O[i-1][j] ].support || things[ O[i-1][j] ].fixed ) {
 					//блок залишається на місці
 				} else {
-					//console.log(j,i," : ",O[i][j] ,  O[i-1][j] );//x
 
 					if (
-						thing.support //block has own adhesive property "support"
+						thing.adhesive //block has own adhesive property
 						&& (
-							(things[ O[i][j-1] ].fixed || things[ O[i][j-1] ].support && things[ O[i-1][j-1] ].support) //left "semi-support"
-							|| (things[ O[i][j+1] ].fixed || things[ O[i][j+1] ].support && things[ O[i-1][j+1] ].support) //right "semi-support" //O[i][j+1]==="G" && O[i-1][j+1]==="G"
+							things[ O[i][j-1] ].adhesive && ( things[ O[i][j-1] ].fixed || things[ O[i-1][j-1] ].support || things[ O[i-1][j-1] ].fixed ) //left "semi-support"
+							|| things[ O[i][j+1] ].adhesive && ( things[ O[i][j+1] ].fixed || things[ O[i-1][j+1] ].support || things[ O[i-1][j+1] ].fixed ) //right "semi-support"
+							//|| (things[ O[i][j+1] ].fixed || things[ O[i][j+1] ].support && things[ O[i-1][j+1] ].support) //right "semi-support" //O[i][j+1]==="G" && O[i-1][j+1]==="G"
 						)
 					) { //lateral semi-support
 						pFall= 0.001; //ймовірність впасти
 
 						if (Math.random()<=pFall) { //no any kind of support
-							console.log(pFall,j,i,"↓",O[i][j]);//x
+							console.log(pFall,O[i][j],"↓",j,(i-1),O[i-1][j] );//x
 							O[i-1][j]= O[i][j];
 							O[i][j]= " ";
 						}
 
 					} else { //certain fall
-						console.log("certain",j,i,"↓",O[i][j]);//x
+						console.log("certain",O[i][j],"↓",j,(i-1),O[i-1][j] );//x
 						O[i-1][j]= O[i][j];
 						O[i][j]= " ";
 					}
