@@ -475,10 +475,16 @@ setInterval(function() {
 
 		for (var q=0; q<Q; q++) { //для всіх (поки що) чанків
 
+			//-----------------------p-y-r-o-t-e-c-h-n-i-k-s-------------------------(
+
+			//"&"
+
+
+			//-----------------------p-y-r-o-t-e-c-h-n-i-k-s-------------------------)
 
 			//-------------------------b-o-t-a-n-y-----------------------------------(
 
-			var i= Math.floor( 1 + Math.random()*(H-1) ), j= Math.floor(Math.random()*W);//? поіде для біології
+			var i= Math.floor( 1 + Math.random()*(H-2) ), j= Math.floor(Math.random()*W);//? поіде для біології
 
 			//var thing= things[ O[q][i][j] ];
 			if (O[q][i][j]===" ") { // " "-> @ or *
@@ -486,8 +492,15 @@ setInterval(function() {
 				//console.log(q,"space",j,i);//x
 
 				if (
-					O[q][i-1][j]==="@" && i>2 && ( O[q][i-2][j]==="G" || O[q][i-2][j]==="Y" )
-					|| (
+					O[q][i-1][j]==="@"
+					&& i>2
+					&& ( O[q][i-2][j]==="G" || O[q][i-2][j]==="Y" )
+				) {
+					//grow up
+					O[q][i][j]=  "@";
+					console.log(q,"grow up",	O[q][i][j],j,i);//x
+				} else if (
+					(
 						O[_left.q][i][_left.J]==="@"
 						&& ( O[_left.q][i-1][_left.J]==="G" || O[_left.q][i-1][_left.J]==="Y" )
 					)
@@ -497,15 +510,21 @@ setInterval(function() {
 					)
 				) {
 					//grow up
-
-					O[q][i][j]= (Math.random()<0.5)? "@": "*";
+					O[q][i][j]= (Math.random()<0.7)? "*": "@";
 					console.log(q,"grow up",	O[q][i][j],j,i);//x
 				}
 
 			}
 
+
+
 			if (O[q][i][j]==="@") { // @->Y
-				if ( O[q][i-1][j]==="G" || O[q][i-1][j]==="Y" ) {
+				if (Math.random()<0.001) { //доємо мікроскопічний шанс засохнути
+					O[q][i][j]= "/";
+				} else if (
+					(O[q][i-1][j]==="G" || O[q][i-1][j]==="Y")
+					&& O[q][i+1][j]==="@" //якщо це не вершина дерева (вершину треба би залишити для продовження росту, бо щось не хочуть вверх рости)
+				) {
 					console.log(q,"grow @ to Y",j,i);//x
 					O[q][i][j]= "Y";
 				}
@@ -513,7 +532,7 @@ setInterval(function() {
 
 			if (O[q][i][j]==="Y") { // Y->W
 				if ( O[q][i-1][j]==="G" || O[q][i-1][j]==="Y" ) {
-					//nop
+					if ( O[q][i-1][j]==="G" ) O[q][i][j]= (Math.random()<0.001)? "w": "Y"; //x - тимчасово даємо можливість дереву засохнути від кореня
 				} else {
 					console.log(q,"shrink Y to w",j,i);//x
 					O[q][i][j]= "W";
