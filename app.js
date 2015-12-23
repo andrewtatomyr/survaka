@@ -464,7 +464,7 @@ setInterval(function() {
 	}
 	fs.writeFileSync('survivors-list.txt', JSON.stringify(survivors));
 
-	/* статика */
+	/* World background processing */
 	if (survivorsCount) {//if at least one S is active
 
 		//console.log(survivorsCount);//x
@@ -476,33 +476,75 @@ setInterval(function() {
 		for (var q=0; q<Q; q++) { //для всіх (поки що) чанків
 
 
+			//-------------------------b-o-t-a-n-y-----------------------------------(
+
+			var i= Math.floor( 1 + Math.random()*(H-1) ), j= Math.floor(Math.random()*W);//? поіде для біології
+
+			//var thing= things[ O[q][i][j] ];
+			if (O[q][i][j]===" ") { // " "-> @ or *
+				var _left= relative(q*W+j-1,W,Q), _right= relative(q*W+j+1,W,Q);
+				//console.log(q,"space",j,i);//x
+
+				if (
+					O[q][i-1][j]==="@" && i>2 && ( O[q][i-2][j]==="G" || O[q][i-2][j]==="Y" )
+					|| (
+						O[_left.q][i][_left.J]==="@"
+						&& ( O[_left.q][i-1][_left.J]==="G" || O[_left.q][i-1][_left.J]==="Y" )
+					)
+					|| (
+						O[_right.q][i][_right.J]==="@"
+						&& ( O[_right.q][i-1][_right.J]==="G" || O[_right.q][i-1][_right.J]==="Y" )
+					)
+				) {
+					//grow up
+
+					O[q][i][j]= (Math.random()<0.5)? "@": "*";
+					console.log(q,"grow up",	O[q][i][j],j,i);//x
+				}
+
+			}
+
+			if (O[q][i][j]==="@") { // @->Y
+				if ( O[q][i-1][j]==="G" || O[q][i-1][j]==="Y" ) {
+					console.log(q,"grow @ to Y",j,i);//x
+					O[q][i][j]= "Y";
+				}
+			}
+
+			if (O[q][i][j]==="Y") { // Y->W
+				if ( O[q][i-1][j]==="G" || O[q][i-1][j]==="Y" ) {
+					//nop
+				} else {
+					console.log(q,"shrink Y to w",j,i);//x
+					O[q][i][j]= "W";
+				}
+			}
 
 
-			//var i= Math.floor( 1 + Math.random()*(H-1) ), j= Math.floor(Math.random()*W);//? поіде для біології
+			//-------------------------b-o-t-a-n-y-----------------------------------)
 
 
+			//-------------------------s-t-a-t-i-c-s---------------------------------(
 
-
-			for (var i= 1; i<H; i++) { //ТАКИ ТРЕБА ПРОХОДИТИ ВСІ КЛІТИНКИ ДЛЯ СТАТИКИ
+			for (var i= H-1; i>1; i--) { //ТАКИ ТРЕБА ПРОХОДИТИ ВСІ КЛІТИНКИ ДЛЯ СТАТИКИ
 				for (var j= 0; j<W; j++) {
-					//біологію окремо (можливо, тут же, але рознести в дві послідовні операції)
 					var thing= things[ O[q][i][j] ];
 
 					if ( thing.space || thing.fixed || !things[ O[q][i-1][j] ].space ) {
 						//блок залишається на місці
 					} else { //шукаємо можливі адгезивні зв'язки
 
-						var relL= relative(q*W+j-1,W,Q), relR= relative(q*W+j+1,W,Q);
+						var _left= relative(q*W+j-1,W,Q), _right= relative(q*W+j+1,W,Q);
 						//console.log("------->",q,j,i);
 						if (
 							thing.adhesive
 							&&	(
-								thing.adhesive[ O[relL.q][i][relL.J] ] && ( things[ O[relL.q][i][relL.J] ].fixed || !things[ O[relL.q][i-1][relL.J] ].space ) //left "semi-support"
-								|| thing.adhesive[ O[relR.q][i][relR.J] ] && ( things[ O[relR.q][i][relR.J] ].fixed || !things[ O[relR.q][i-1][relR.J] ].space ) //right "semi-support"
+								thing.adhesive[ O[_left.q][i][_left.J] ] && ( things[ O[_left.q][i][_left.J] ].fixed || !things[ O[_left.q][i-1][_left.J] ].space ) //left "semi-support"
+								|| thing.adhesive[ O[_right.q][i][_right.J] ] && ( things[ O[_right.q][i][_right.J] ].fixed || !things[ O[_right.q][i-1][_right.J] ].space ) //right "semi-support"
 							)
 						) { //lateral semi-support
-							var pAdhL= ( thing.adhesive[ O[relL.q][i][relL.J] ] )? thing.adhesive[ O[relL.q][i][relL.J] ]: 0;
-							var pAdhR= ( thing.adhesive[ O[relR.q][i][relR.J] ] )? thing.adhesive[ O[relR.q][i][relR.J] ]: 0;
+							var pAdhL= ( thing.adhesive[ O[_left.q][i][_left.J] ] )? thing.adhesive[ O[_left.q][i][_left.J] ]: 0;
+							var pAdhR= ( thing.adhesive[ O[_right.q][i][_right.J] ] )? thing.adhesive[ O[_right.q][i][_right.J] ]: 0;
 							var pFall= (1-pAdhL)*(1-pAdhR); //0.001; //ймовірність впасти
 
 
@@ -522,7 +564,9 @@ setInterval(function() {
 					}
 				}
 			}
+			//-------------------------s-t-a-t-i-c-s---------------------------------)
 
+			//fs.writeFileSync('chunks.txt', JSON.stringify(O));//? це треба якось динамічно писати в БД
 
 		}
 		fs.writeFileSync('chunks.txt', JSON.stringify(O));//? це треба якось динамічно писати в БД
