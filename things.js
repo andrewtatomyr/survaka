@@ -7,15 +7,15 @@ var things= {
 	//space (put into all the things what can be layed out):
 	" ": {
 		name: "space",
-		passVertical: 1,
-		passHorizontal: 1,
-		allowReview: 1,
+		space: 1,
 
 		"+": [1,"|"," "],
 		"g": [1,"G"," "],
 		"h": [1,"H"," "],
 		"*": [1,"*"," "],
 		"w": [1,"W"," "],
+		"@": [1,"@"," "],
+
 
 		"P": [1,"P"," "],
 		"T": [1,"T"," "],
@@ -25,37 +25,29 @@ var things= {
 	},
 	//tools:
 	"/": {
-		name: "stick/cane?",
-		passVertical: 1,
-		passHorizontal: 1,
-		allowReview: 1,
+		name: "cane?",
+		flat: 1,
 		breakageProbablity: 0.01,
 
 		" ": [1," ","/"]
 	},
 	"P": {
 		name: "ax",
-		passVertical: 1,
-		passHorizontal: 1,
-		allowReview: 1,
+		flat: 1,
 		breakageProbablity: 0.01,
 
 		" ": [1," ","P"]
 	},
 	"T": {
 		name: "pickaxe",
-		passVertical: 1,
-		passHorizontal: 1,
-		allowReview: 1,
+		flat: 1,
 		breakageProbablity: 0.01,
 
 		" ": [1," ","T"]
 	},
 	"D": {
 		name: "shovel",
-		passVertical: 1,
-		passHorizontal: 1,
-		allowReview: 1,
+		flat: 1,
 		breakageProbablity: 0.01,
 
 		" ": [1," ","D"]
@@ -63,9 +55,8 @@ var things= {
 	//objects:
 	"G": {
 		name: "ground",
-		support: 1,
-		adhesive: 1,
-		strength: 20,
+		volumetric: 1,
+		adhesive: { "G": 0.99 },
 
 
 		"D": [1,"g","D"],
@@ -74,18 +65,16 @@ var things= {
 	},
 	"g": {
 		name: "piece of ground",
-		passVertical: 1,
-		passHorizontal: 1,
-		allowReview: 1,
-		strength: 10,
+		flat: 1,
+
+		//adhesive: { },
 
 		" ": [1," ","g"]
 	},
 	"W": {
 		name: "wood plank",
+		volumetric: 1,
 		fixed: 1,
-		support: 1,
-		adhesive: 1,
 
 		"P": [1,"w","P"],
 		"/": [0.5,"w","/"],
@@ -93,16 +82,34 @@ var things= {
 	},
 	"w": {
 		name: "uninstalled wood plank",
-		passVertical: 1,
-		passHorizontal: 1,
-		allowReview: 1,
+		flat: 1,
 
 		" ": [1," ","w"]
 	},
+	"H": {
+		name: "ladder",
+		flat: 1,
+		fixed: 1, //?
+		hold: 1,
+
+		"P": [1,"h","P"],
+		"/": [0.5,"h","/"],
+
+		"T": [0.1," ","T"], //x
+		" ": [0.3," ","h"]
+	},
+	"h": {
+		name: "uninstalled ladder",
+		flat: 1,
+
+		" ": [1," ","h"]
+	},
+
+	//door:
 	"|": {
 		name: "vertical door",
+		verticalDoor: 1,
 		fixed: 1, //?
-		passVertical: 1,
 
 		"P": [1,"+","P"],
 		"/": [0.5,"+","/"],
@@ -112,9 +119,8 @@ var things= {
 	},
 	"-": {
 		name: "horizontal door",
+		horizontalDoor: 1,
 		fixed: 1, //?
-		passHorizontal: 1,
-		support: 1,
 
 		"P": [1,"+","P"],
 		"/": [0.5,"+","/"],
@@ -124,74 +130,76 @@ var things= {
 	},
 	"+": {
 		name: "uninstalled door",
-		passVertical: 1,
-		passHorizontal: 1,
-		allowReview: 1,
+		flat: 1,
 
 		" ": [1," ","+"]
-
 	},
-	"H": {
-		name: "ladder",
-		fixed: 1, //?
-		passVertical: 1,
-		passHorizontal: 1,
-		support: 1,
-		hold: 1,
-		allowReview: 1,
+	//live:
+	"@": {
+		name: "banyan leaves (a plenty of leaf)",
+		flat: 1,
+		adhesive: { "@": 0.999, "Y": 0.999 },
 
-		"P": [1,"h","P"],
-		"/": [0.5,"h","/"],
+		live: { "gener": "Y??????", "generic": "*" }, //?????????
 
-		"T": [0.1," ","T"], //x
-		" ": [0.5," ","h"]
-	},
-	"h": {
-		name: "uninstalled ladder",
-		passVertical: 1,
-		passHorizontal: 1,
-		allowReview: 1,
-
-		" ": [1," ","h"]
+		//"P": [1," ","P"],
+		//"/": [0.5," ","/"],
+		" ": [1," ","@"]
 	},
 	"*": {
-		name: "piece of food",
-		passVertical: 1,
-		passHorizontal: 1,
-		allowReview: 1,
-		energyValue: 30,
+		name: "banyan",
+		flat: 1,
+		adhesive: { "@": 0.999 },
+		energyValue: { human: 30 },
 
 		" ": [1," ","*"]
 	},
+	"Y": {
+		name: "banyan three",
+		flat: 1,
+
+		live: { "gener": "W", "generic": "b" }, //?????????
+
+		"P": [1,"w","P"],
+		"/": [0.5,"w","/"],
+		" ": [0.2," ","w"]
+	},
+
+
 
 	//adminium:
-	"0": { fixed: 1, support:1 },
-	"1": { fixed: 1, support:1 },
-	"2": { fixed: 1, support:1 },
-	"3": { fixed: 1, support:1 },
-	"4": { fixed: 1, support:1 },
-	"5": { fixed: 1, support:1 },
-	"6": { fixed: 1, support:1 },
-	"7": { fixed: 1, support:1 },
-	"8": { fixed: 1, support:1 },
-	"9": { fixed: 1, support:1 },
+	"0": { name: "adminium", fixed: 1, volumetric: 1, },
+	"1": { name: "adminium", fixed: 1, volumetric: 1, },
+	"2": { name: "adminium", fixed: 1, volumetric: 1, },
+	"3": { name: "adminium", fixed: 1, volumetric: 1, },
+	"4": { name: "adminium", fixed: 1, volumetric: 1, },
+	"5": { name: "adminium", fixed: 1, volumetric: 1, },
+	"6": { name: "adminium", fixed: 1, volumetric: 1, },
+	"7": { name: "adminium", fixed: 1, volumetric: 1, },
+	"8": { name: "adminium", fixed: 1, volumetric: 1, },
+	"9": { name: "adminium", fixed: 1, volumetric: 1, },
 
 
 
 	//template:
 	"": {
 		name: "",
-		fixed: 1, //предмет не падає, а навпаки - кріпиться до будь-чого
-		passVertical: 1,
-		passHorizontal: 1,
-		support: 1, // визначає  підтримку знизу
-		adhesive: 1,	// бічнa (lateral) напів-підтримкa (прилипання),
-									//а також чи сам цей блок може "прилипати" (до інших з параметром adhesive)
+
+		space: 1, //xor: not support - allow rewiew -
+		flat: 1, //xor: support if space or door above - allow rewiew -
+		volumetric: 1, //xor: support - disallow review -
+		verticalDoor: 1, //xor: pass vertical -
+		horizontalDoor: 1, //xor: pass horizontal -
+
 		hold: 1, //утримує (ladder)
-		allowReview: 1, //крізь предмет можна дивитися
-		strength: 10, //це на потім - при падінні предмет з більшим thing.strength заміщає предмет з меншим.
-									//якщо вони рівні, то падіння (можливо) не відбувається
-		energyValue: 30, //харчова цінність
+		fixed: 1, //предмет не падає, а навпаки - кріпиться до будь-чого
+
+		breakageProbablity: 0.01, //для інструментів
+
+
+		adhesive: { "": 0.99 },	// бічнa (lateral) напів-підтримкa (прилипання) - вказати, до чого цей блок може "прилипати" (можливо, вказати ймовірність прилипання)
+
+		energyValue: { human: 30, animal: 10 }, //харчова цінність - вказати для кого
 
 		"tool": ["probabilityOfInteraction","inWorld","inHands"],
 		" ": [1,"inWorld","inHands"]

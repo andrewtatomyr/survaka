@@ -183,7 +183,7 @@ app.post('/api/refresh', function(req,res) { //refresh situation
 	/*
 	O= JSON.parse(fs.readFileSync('O.txt'));
 	*/
-	 O= JSON.parse(fs.readFileSync("chunks.txt"));
+	O= JSON.parse(fs.readFileSync("chunks.txt"));
 	//O= chunks
 
 
@@ -229,7 +229,7 @@ app.post('/api/refresh', function(req,res) { //refresh situation
 
 
 
-
+	/*
 	var rel= relative(S.x,W,Q);
 	//console.log(rel,O);//x
 
@@ -242,6 +242,48 @@ app.post('/api/refresh', function(req,res) { //refresh situation
 
 	if ( things[ O[lateral.q][S.y][lateral.J] ].passHorizontal ) { //?
 	//if ( things[ O[S.y][S.x+S.dx] ].passHorizontal ) { //?
+		S.x= lateral.j;
+		S.q= lateral.q;
+		//S.x+= S.dx;
+	}
+
+	if ( S.dx || S.dy ) console.log("q:",S.q,"dy:",S.dy,"dx:",S.dx);//x
+	//at last:
+	S.dy= 0;
+	S.dx= 0;
+	*/
+
+	var rel= relative(S.x,W,Q); //горизонтальна координата в чанку
+	//console.log(rel,O);//x
+
+	if (
+		(
+			things[ O[rel.q][S.y+S.dy][rel.J] ].flat
+			|| things[ O[rel.q][S.y+S.dy][rel.J] ].space
+			|| things[ O[rel.q][S.y+S.dy][rel.J] ].verticalDoor
+		)
+		&& (
+			(
+				things[ O[rel.q][S.y-1][rel.J] ].volumetric
+				|| things[ O[rel.q][S.y-1][rel.J] ].horizontalDoor
+				|| things[ O[rel.q][S.y][rel.J] ].hold
+			)
+			|| (
+				things[ O[rel.q][S.y-1][rel.J] ].flat
+				&& ( things[ O[rel.q][S.y][rel.J] ].space || things[ O[rel.q][S.y][rel.J] ].verticalDoor || things[ O[rel.q][S.y][rel.J] ].horizontalDoor )
+			)
+		)
+	) {
+		S.y+= S.dy;
+	}
+
+	var	lateral= relative(S.x+S.dx,W,Q);  //бічна горизонтальна координата в чанку в напрямку потенційного руху
+
+	if (
+		things[ O[lateral.q][S.y][lateral.J] ].flat
+		|| things[ O[lateral.q][S.y][lateral.J] ].space
+		|| things[ O[lateral.q][S.y][lateral.J] ].horizontalDoor
+	) { //?
 		S.x= lateral.j;
 		S.q= lateral.q;
 		//S.x+= S.dx;
@@ -280,11 +322,11 @@ app.post('/api/refresh', function(req,res) { //refresh situation
 
 	//---------------------------r-e-v-i-e-w---m-a-s-k---------------------------(
 
-	var allowReview= ' HPTD+*hg'; //!
+	//var allowReview= ' HPTD+*hg'; //!
 	var reviewRange= 9;//yet
 
 	var reviewMask= actionMask;
-	/* //потім доробити. можливо, навіть зробити як я думав - видимість як замкнута фігура.
+	/* оптика //потім доробити. можливо, навіть зробити як я думав - видимість як замкнута фігура.
 
 	for (var s= 0; s<2*squared.PI*reviewRange; s++) { //прохдимо по дузі
 		for (var r= 2; r<=reviewRange; r++) { //проходимо по променю
@@ -380,14 +422,16 @@ app.post('/api/refresh', function(req,res) { //refresh situation
 	//----------------------------------f-a-l-l----------------------------------(
 
 	var rel= relative(S.x,W,Q);//!?
-	///var doNotSupport= ' |'; //!
-	if ( things[ O[rel.q][S.y][rel.J] ].hold || things[ O[rel.q][S.y-1][rel.J] ].support ) {
+	if (
+		things[ O[rel.q][S.y][rel.J] ].hold
+		|| things[ O[rel.q][S.y-1][rel.J] ].volumetric
+		|| things[ O[rel.q][S.y-1][rel.J] ].horizontalDoor
+		|| things[ O[rel.q][S.y-1][rel.J] ].flat && ( things[ O[rel.q][S.y][rel.J] ].space || things[ O[rel.q][S.y][rel.J] ].verticalDoor || things[ O[rel.q][S.y][rel.J] ].horizontalDoor )
+	) {
 		//nop
-	} else {//falling //doNotSupport.indexOf(O[S.y-1][S.x])>-1
-		//if ( hold.indexOf(O[S.y][S.x])===-1 && support.indexOf(O[S.y-1][S.x])===-1 ) { //falling //doNotSupport.indexOf(O[S.y-1][S.x])>-1
+	} else {
 		console.log("fall down" );//x
 		S.y--;
-		//fs.writeFileSync('S.txt', JSON.stringify(S));//?
 	}
 
 
@@ -420,7 +464,7 @@ setInterval(function() {
 	}
 	fs.writeFileSync('survivors-list.txt', JSON.stringify(survivors));
 
-	/* */
+	/* статика */
 	if (survivorsCount) {//if at least one S is active
 
 		//console.log(survivorsCount);//x
@@ -430,29 +474,37 @@ setInterval(function() {
 		//тут треба вибрати активні чанки
 
 		for (var q=0; q<Q; q++) { //для всіх (поки що) чанків
-			for (var i= 1; i<H; i++) {
-				//for (var j= 1; j<9; j++) {//x
+
+
+
+
+			//var i= Math.floor( 1 + Math.random()*(H-1) ), j= Math.floor(Math.random()*W);//? поіде для біології
+
+
+
+
+			for (var i= 1; i<H; i++) { //ТАКИ ТРЕБА ПРОХОДИТИ ВСІ КЛІТИНКИ ДЛЯ СТАТИКИ
 				for (var j= 0; j<W; j++) {
-					//зробити універсальним
-
+					//біологію окремо (можливо, тут же, але рознести в дві послідовні операції)
 					var thing= things[ O[q][i][j] ];
-					//if (thing===" ") continue; //якщо повітря - пропускаємо
-					if ( O[q][i][j]===" " || thing.fixed || things[ O[q][i-1][j] ].support || things[ O[q][i-1][j] ].fixed ) {
+
+					if ( thing.space || thing.fixed || !things[ O[q][i-1][j] ].space ) {
 						//блок залишається на місці
-					} else {
+					} else { //шукаємо можливі адгезивні зв'язки
 
-						var relL= relative(q*W+j-1,W,Q),
-				 			relR= relative(q*W+j+1,W,Q);
-
+						var relL= relative(q*W+j-1,W,Q), relR= relative(q*W+j+1,W,Q);
+						//console.log("------->",q,j,i);
 						if (
-							thing.adhesive //block has own adhesive property
-							&& (
-							 	things[ O[relL.q][i][relL.J] ].adhesive && ( things[ O[relL.q][i][relL.J] ].fixed || things[ O[relL.q][i-1][relL.J] ].support || things[ O[relL.q][i-1][relL.J] ].fixed ) //left "semi-support"
-								|| things[ O[relR.q][i][relR.J] ].adhesive && ( things[ O[relR.q][i][relR.J] ].fixed || things[ O[relR.q][i-1][relR.J] ].support || things[ O[relR.q][i-1][relR.J] ].fixed ) //right "semi-support"
-								//|| (things[ O[i][j+1] ].fixed || things[ O[i][j+1] ].support && things[ O[i-1][j+1] ].support) //right "semi-support" //O[i][j+1]==="G" && O[i-1][j+1]==="G"
+							thing.adhesive
+							&&	(
+								thing.adhesive[ O[relL.q][i][relL.J] ] && ( things[ O[relL.q][i][relL.J] ].fixed || !things[ O[relL.q][i-1][relL.J] ].space ) //left "semi-support"
+								|| thing.adhesive[ O[relR.q][i][relR.J] ] && ( things[ O[relR.q][i][relR.J] ].fixed || !things[ O[relR.q][i-1][relR.J] ].space ) //right "semi-support"
 							)
 						) { //lateral semi-support
-							pFall= 0.001; //ймовірність впасти
+							var pAdhL= ( thing.adhesive[ O[relL.q][i][relL.J] ] )? thing.adhesive[ O[relL.q][i][relL.J] ]: 0;
+							var pAdhR= ( thing.adhesive[ O[relR.q][i][relR.J] ] )? thing.adhesive[ O[relR.q][i][relR.J] ]: 0;
+							var pFall= (1-pAdhL)*(1-pAdhR); //0.001; //ймовірність впасти
+
 
 							if (Math.random()<=pFall) { //no any kind of support
 								console.log(pFall,O[q][i][j],"↓",j,(i-1),O[q][i-1][j] );//x
@@ -470,10 +522,13 @@ setInterval(function() {
 					}
 				}
 			}
-			fs.writeFileSync('chunks.txt', JSON.stringify(O));//?
-		}
 
+
+		}
+		fs.writeFileSync('chunks.txt', JSON.stringify(O));//? це треба якось динамічно писати в БД
 	}
+
+
 	//fs.writeFileSync('S.txt', JSON.stringify(S));//?
 
 	//console.log(t);
