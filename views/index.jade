@@ -3,11 +3,14 @@ html
 		title Survaka | Виживака
 		link(href='style.css', rel='stylesheet')
 		script(src='jquery-1.11.2.min.js')
-		script(src='jquery-cookie-master/src/jquery.cookie.js')
-		script(src='set-name.js')
 
 
 	body
 
-		input(type="text" name="sname" id="sname" placeholder="[a-z]" )
-		button(id="start" onclick="setNameAndStart()" ) start
+		form(action="/world")
+			input(type="text" name="sname" id="sname" placeholder="[a-z]" )
+			input(type="submit" value="start" )
+
+		button(id="live" onclick="setNameToLive()" ) live
+
+		script var setNameToLive= function() { window.location= "live?sname="+$("#sname").val(); }

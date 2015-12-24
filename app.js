@@ -2,7 +2,9 @@ var express = require('express')
 var app = express();
 
 var bodyParser = require('body-parser');
-var cookieParser = require('cookie-parser');
+var http= require("http");
+var url= require("url");
+
 
 app.set('view engine', 'jade');
 
@@ -13,7 +15,6 @@ app.use(express.static('public')); //тут усі статичні файли, 
 
 app.use(bodyParser.urlencoded({'extended': 'true'})); //без цього не хотіло читати дані POST :) Очевидно!
 app.use(bodyParser.json());
-app.use(cookieParser());
 
 var fs= require('fs');
 //------------------------------------------------------
@@ -33,7 +34,7 @@ console.log(O);
 var dispH= H;
 var dispW= 15;
 
-var survivors= JSON.parse(fs.readFileSync("survivors-list.txt"));
+var survivors= JSON.parse(fs.readFileSync("live.txt"));
 console.log(survivors);
 
 
@@ -41,7 +42,8 @@ console.log(survivors);
 
 app.get('/', function (req, res) { //start
 	res.render('index.jade');
-	//console.log("Cookies: ", req.cookies);//x
+	var sname = url.parse(req.url, true).query.sname;
+	console.log("index | sname: ", sname);//x
 });
 
 app.get('/world', function (req, res) { //start
@@ -49,10 +51,16 @@ app.get('/world', function (req, res) { //start
 	res.render('world.jade', { dispH: dispH, dispW: dispW});
 });
 
+app.get('/live', function (req, res) { //start
+	console.log("start live");//x
+	res.render('live.jade', { ok: "ok" } );
+});
+
 
 app.get('/api/start-param', function(req,res) { //забрати нафіг!
-	console.log("Cookies: ", req.cookies);//x
-	S= JSON.parse(fs.readFileSync("S-"+req.cookies.sname+".txt"));
+	var sname = url.parse(req.url, true).query.sname;
+	console.log("start | sname: ", sname);//x
+	S= JSON.parse(fs.readFileSync("S-"+sname+".txt"));
 	console.log(S); //x
 
 	//завантажувати відповідно до координати
@@ -173,20 +181,15 @@ function relative(j,W,Q) { //відносна координата по гори
 
 //-------------------------------r-e-f-r-e-s-h---------------------------------(
 app.post('/api/refresh', function(req,res) { //refresh situation
+	var sname = url.parse(req.url, true).query.sname;
 
-	S= JSON.parse(fs.readFileSync("S-"+req.cookies.sname+".txt")); //S= JSON.parse(fs.readFileSync('S.txt'));
+	S= JSON.parse(fs.readFileSync("S-"+sname+".txt")); //якщо цього не робити, то файли S для різних суб'єквів почнуть змішуватися один з одним
 
 	S.dy= 1*req.body.dy;
 	S.dx= 1*req.body.dx;
 	S.I[0]= 1*req.body.n;
 
-	/*
-	O= JSON.parse(fs.readFileSync('O.txt'));
-	*/
-	O= JSON.parse(fs.readFileSync("chunks.txt"));
-	//O= chunks
-
-
+	O= JSON.parse(fs.readFileSync("chunks.txt")); //зчитуємо світ
 
 	if (req.body.cell) { //manipulate
 		manipulate( req.body.cell.i , req.body.cell.j , S.I[0] );
@@ -203,63 +206,12 @@ app.post('/api/refresh', function(req,res) { //refresh situation
 	//-----------------------------------m-o-v-e---------------------------------(
 
 
-	/*
-	//allowAction is always when passVertical || passHorizontal?
-	var things= {
-		space: {
-			iconInstalled: " ",
-			iconLaying: " ",
-			passVertical: "+",
-			passHorizontal: "+",
-			support: "",
-			hold: "",
-			allowAction: "+"
-		},
-		ground: {
-			iconInstalled: "G",
-			iconLaying: "g",
-			passVertical: "",
-			passHorizontal: "",
-			support: "+",
-			hold: "",
-			allowAction: ""
-		},
-	}
-	*/
-
-
-
-	/*
-	var rel= relative(S.x,W,Q);
-	//console.log(rel,O);//x
-
-	if ( things[ O[rel.q][S.y+S.dy][rel.J] ].passVertical && ( things[ O[rel.q][S.y-1][rel.J] ].support || things[ O[rel.q][S.y][rel.J] ].hold ) ) { //?
-	//if ( things[ O[S.y+S.dy][S.x] ].passVertical && ( things[ O[S.y-1][S.x] ].support || things[ O[S.y][S.x] ].hold ) ) { //?
-		S.y+= S.dy;
-	}
-
-	var	lateral= relative(S.x+S.dx,W,Q);
-
-	if ( things[ O[lateral.q][S.y][lateral.J] ].passHorizontal ) { //?
-	//if ( things[ O[S.y][S.x+S.dx] ].passHorizontal ) { //?
-		S.x= lateral.j;
-		S.q= lateral.q;
-		//S.x+= S.dx;
-	}
-
-	if ( S.dx || S.dy ) console.log("q:",S.q,"dy:",S.dy,"dx:",S.dx);//x
-	//at last:
-	S.dy= 0;
-	S.dx= 0;
-	*/
-
 	var rel= relative(S.x,W,Q); //горизонтальна координата в чанку
-	//console.log(rel,O);//x
 
 	if (
 		(
-			things[ O[rel.q][S.y+S.dy][rel.J] ].flat
-			|| things[ O[rel.q][S.y+S.dy][rel.J] ].space
+			things[ O[rel.q][S.y+S.dy][rel.J] ].space
+			|| things[ O[rel.q][S.y+S.dy][rel.J] ].flat
 			|| things[ O[rel.q][S.y+S.dy][rel.J] ].verticalDoor
 		)
 		&& (
@@ -273,6 +225,7 @@ app.post('/api/refresh', function(req,res) { //refresh situation
 				&& ( things[ O[rel.q][S.y][rel.J] ].space || things[ O[rel.q][S.y][rel.J] ].verticalDoor || things[ O[rel.q][S.y][rel.J] ].horizontalDoor )
 			)
 		)
+		&& !S.justFell
 	) {
 		S.y+= S.dy;
 	}
@@ -302,7 +255,6 @@ app.post('/api/refresh', function(req,res) { //refresh situation
 
 	//---------------------------a-c-t-i-o-n---m-a-s-k---------------------------(
 
-	//у які координати це перевести???????????
 
 	//var allowAction= " H"; //' -|H'; //! //таки дозволю ламати ,,закриті'' блоки по діагоналі- по аналогії як у reviewMask
 	var actionMask= '['+(S.y)+'|'+(S.x-1)+']'
@@ -385,11 +337,10 @@ app.post('/api/refresh', function(req,res) { //refresh situation
 	//-------------------------o-t-h-e-r-s-&-o-n-l-i-n-e-------------------------(
 
 
-	var survivors= JSON.parse(fs.readFileSync("survivors-list.txt")); //S= JSON.parse(fs.readFileSync('S.txt'));
-	var sname= req.cookies.sname;
+	var survivors= JSON.parse(fs.readFileSync("live.txt")); //S= JSON.parse(fs.readFileSync('S.txt'));
 
 	survivors[sname]= 10; //задаємо маркер присутності (він з кожним тиком буде зменшуватися)
-	fs.writeFileSync('survivors-list.txt', JSON.stringify(survivors)); //зберігаємо маркер соєї присутності
+	fs.writeFileSync('live.txt', JSON.stringify(survivors)); //зберігаємо маркер соєї присутності
 
 	var others= {}; //інші виживаки
 	for (var key in survivors) { //перебираємо інших виживак
@@ -429,21 +380,21 @@ app.post('/api/refresh', function(req,res) { //refresh situation
 		|| things[ O[rel.q][S.y-1][rel.J] ].flat && ( things[ O[rel.q][S.y][rel.J] ].space || things[ O[rel.q][S.y][rel.J] ].verticalDoor || things[ O[rel.q][S.y][rel.J] ].horizontalDoor )
 	) {
 		//nop
+		S.justFell= 0; //очищаємо флаг падіння
 	} else {
 		console.log("fall down" );//x
 		S.y--;
+		S.justFell= 1; //задаємо флаг падіння
 	}
 
+	//-----------------------------------f-a-l-l---------------------------------)
 
-	fs.writeFileSync("S-"+req.cookies.sname+".txt", JSON.stringify(S));//?
-	//fs.writeFileSync('O.txt', JSON.stringify(O));//?
+
+	fs.writeFileSync("S-"+sname+".txt", JSON.stringify(S));//?
 	fs.writeFileSync('chunks.txt', JSON.stringify(O));//?
 
-	//fs.writeFile("S.txt", JSON.stringify(S), function() {	});//?
-	//fs.writeFile("O.txt", JSON.stringify(O), function() {	});//?
 
 
-	//-----------------------------------f-a-l-l---------------------------------)
 
 
 });
@@ -455,14 +406,14 @@ setInterval(function() {
 	t+= tick;
 
 
-	var survivors= JSON.parse(fs.readFileSync("survivors-list.txt")); //S= JSON.parse(fs.readFileSync('S.txt'));
+	var survivors= JSON.parse(fs.readFileSync("live.txt")); //S= JSON.parse(fs.readFileSync('S.txt'));
 	var survivorsCount= 0;
 	for (var key in survivors) {
 		survivors[key]--;
 		if (survivors[key]<0) survivors[key]= 0;
 		survivorsCount+= (survivors[key]>0)? 1: 0;
 	}
-	fs.writeFileSync('survivors-list.txt', JSON.stringify(survivors));
+	fs.writeFileSync('live.txt', JSON.stringify(survivors)); //записуємо нові значення онлайну
 
 	/* World background processing */
 	if (survivorsCount) {//if at least one S is active
@@ -497,7 +448,7 @@ setInterval(function() {
 					&& ( O[q][i-2][j]==="G" || O[q][i-2][j]==="Y" )
 				) {
 					//grow up
-					O[q][i][j]=  "@";
+					O[q][i][j]= (Math.random()<0.7)? "@": "*";
 					console.log(q,"grow up",	O[q][i][j],j,i);//x
 				} else if (
 					(
@@ -512,6 +463,13 @@ setInterval(function() {
 					//grow up
 					O[q][i][j]= (Math.random()<0.7)? "*": "@";
 					console.log(q,"grow up",	O[q][i][j],j,i);//x
+				} else if (
+					(	O[_left.q][i][_left.J]==="@" || O[_right.q][i][_right.J]==="@" )
+					&& O[q][i-1][j]===" " //?
+				) {
+					//grow up
+					O[q][i][j]= (Math.random()<0.5)? "*": "@";
+					console.log(q,"grow up",	O[q][i][j],j,i);//x
 				}
 
 			}
@@ -519,7 +477,7 @@ setInterval(function() {
 
 
 			if (O[q][i][j]==="@") { // @->Y
-				if (Math.random()<0.001) { //доємо мікроскопічний шанс засохнути
+				if (Math.random()<0.1) { //доємо  шанс засохнути
 					O[q][i][j]= "/";
 				} else if (
 					(O[q][i-1][j]==="G" || O[q][i-1][j]==="Y")
@@ -535,7 +493,7 @@ setInterval(function() {
 					if ( O[q][i-1][j]==="G" ) O[q][i][j]= (Math.random()<0.001)? "w": "Y"; //x - тимчасово даємо можливість дереву засохнути від кореня
 				} else {
 					console.log(q,"shrink Y to w",j,i);//x
-					O[q][i][j]= "W";
+					O[q][i][j]= "w";
 				}
 			}
 

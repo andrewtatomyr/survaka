@@ -1,1 +1,1 @@
-{"face":"ツ","q":2,"y":3,"x":28,"dy":0,"dx":0,"health":100,"fullness":47.224880377584995,"I":[5," ","@","*"," ","?","h","D","P","/"],"manipulate":"","selfAction":""}
+{"face":"ツ","q":1,"y":2,"x":10,"dy":0,"dx":0,"health":100,"fullness":11.682858161411295,"I":[9," "," "," ","*","?","h","D","P","/"],"manipulate":"","selfAction":"","justFell":0}

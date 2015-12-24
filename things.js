@@ -20,7 +20,7 @@ var things= {
 
 
 	},
-	"~??": {
+	"~ ??": {
 		name: "water",
 		space: 1,
 
@@ -42,18 +42,19 @@ var things= {
 		name: "fire",
 		space: 1,
 
+		"&": [1,"&"," "],
 		"+": [1,"&"," "],
 		"g": [1,"G"," "],
 		"h": [1,"&"," "],
 		"*": [1,"&","?"],
-		"w": [1,"&"," "],
+		"w": [1,"&","&"],
 		"@": [1,"&"," "],
 
 
-		"P": [1," "," "],
-		"T": [1," "," "],
-		"D": [1," "," "],
-		"/": [0.2," ","/"]
+		"P": [1,"&"," "],
+		"T": [1,"&"," "],
+		"D": [0.3," ","D"],
+		"/": [1,"&","&"]
 
 	},
 	"?": {
@@ -117,12 +118,14 @@ var things= {
 
 		"P": [1,"w","P"],
 		"/": [0.5,"w","/"],
+		"&": [1,"&"," "],
 		" ": [0.2," ","w"]
 	},
 	"w": {
 		name: "uninstalled wood plank",
 		flat: 1,
 
+		"&": [1,"&"," "],
 		" ": [1," ","w"]
 	},
 	"H": {
@@ -177,7 +180,8 @@ var things= {
 	"@": {
 		name: "banyan leaves (a plenty of leaf)",
 		flat: 1,
-		adhesive: { "@": 0.999, "Y": 0.999 },
+		adhesive: { "@": 0.9993, "Y": 0.9997 },
+		energyValue: { animal: 20 },
 
 		live: { "gener": "Y??????", "generic": "*" }, //?????????
 
@@ -188,14 +192,15 @@ var things= {
 	"*": {
 		name: "banyan",
 		flat: 1,
-		adhesive: { "@": 0.999 },
-		energyValue: { human: 30 },
+		adhesive: { "@": 0.995 },
+		energyValue: { human: 15, animal: 30 },
 
 		" ": [1," ","*"]
 	},
 	"Y": {
 		name: "banyan three",
 		flat: 1,
+		energyValue: { animal: 15 },
 
 		live: { "geners": "W", "generic": "b" }, //?????????
 
