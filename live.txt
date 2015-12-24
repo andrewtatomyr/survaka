@@ -1,1 +1,1 @@
-{"виживака":10,"snowman":10,"survaka":0}
+{"виживака":8,"snowman":8,"survaka":0}

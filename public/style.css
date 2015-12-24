@@ -17,6 +17,10 @@ body {
   margin: 5px;
 }
 
+table.shell {
+  border: 1px solid white;
+}
+
 td {
   text-align: center;
   vertical-align: middle;
@@ -40,4 +44,12 @@ td {
 span {
   margin: 5px;
   padding: 5px;
+}
+
+#self {
+  color: green;
+}
+
+.others {
+  color: red;
 }

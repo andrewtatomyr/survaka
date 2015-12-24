@@ -6,6 +6,8 @@ var things= {
 
 		"+": [1,"|"," "],
 		"g": [1,"G"," "],
+		"r": [1,"R"," "],
+
 		"h": [1,"H"," "],
 		"*": [1,"*"," "],
 		"w": [1,"W"," "],
@@ -109,6 +111,22 @@ var things= {
 
 		" ": [1," ","g"]
 	},
+	"R": {
+		name: "rock",
+		volumetric: 1,
+		//adhesive: { },
+
+
+		"T": [0.5,"r","D"],
+		"D": [0.1," "," "],
+		"/": [0.1,"r"," "]
+	},
+	"g": {
+		name: "piece of rock",
+		flat: 1,
+
+		" ": [1," ","r"]
+	},
 	"W": {
 		name: "wood plank",
 		volumetric: 1,
@@ -180,7 +198,7 @@ var things= {
 	"@": {
 		name: "banyan leaves (a plenty of leaf)",
 		flat: 1,
-		adhesive: { "@": 0.9993, "Y": 0.9997 },
+		adhesive: { "@": 0.9999, "Y": 0.9999 },
 		energyValue: { animal: 20 },
 
 		live: { "gener": "Y??????", "generic": "*" }, //?????????
@@ -192,7 +210,7 @@ var things= {
 	"*": {
 		name: "banyan",
 		flat: 1,
-		adhesive: { "@": 0.995 },
+		adhesive: { "@": 0.9995 },
 		energyValue: { human: 15, animal: 30 },
 
 		" ": [1," ","*"]
@@ -231,36 +249,27 @@ var things= {
 	"": {
 		name: "",
 
-		space: 1, //xor: not support - allow rewiew -
-		flat: 1, //xor: support if space or door above - allow rewiew -
-		volumetric: 1, //xor: support - disallow review -
-		verticalDoor: 1, //xor: pass vertical -
-		horizontalDoor: 1, //xor: pass horizontal -
+		space: 1, //xor; do not support sobjects nor objects - allow rewiew -
+		flat: 1, //xor; support if space or door above - allow rewiew -
+		volumetric: 1, //xor; always support - disallow review -
+		verticalDoor: 1, //xor; pass vertical -
+		horizontalDoor: 1, //xor; pass horizontal -
 
 		hold: 1, //утримує (ladder)
-		fixed: 1, //предмет не падає, а навпаки - кріпиться до будь-чого
+		fixed: 1, //object does not fall but attached in any place //предмет не падає, а навпаки - кріпиться до будь-чого
 
-		breakageProbablity: 0.01, //для інструментів
+		breakageProbablity: 0.01, //~for tools
 
 
-		adhesive: { "": 0.99 },	// бічнa (lateral) напів-підтримкa (прилипання) - вказати, до чого цей блок може "прилипати" (можливо, вказати ймовірність прилипання)
+		adhesive: { "": 0.9 },	//lateral adhesivity to specified object with specified probability //бічнa (lateral) напів-підтримкa (прилипання) - вказати, до чого цей блок може "прилипати" (можливо, вказати ймовірність прилипання)
 
-		energyValue: { human: 30, animal: 10 }, //харчова цінність - вказати для кого
+		energyValue: { human: 10, animal: 10 }, //харчова цінність - вказати для кого
 
-		"tool": ["probabilityOfInteraction","inWorld","inHands"],
+		"tool": ["probabilityOfInteraction","inWorld","inHands"], //what the specified tool do with the object and with himself
 		" ": [1,"inWorld","inHands"]
 	}
 }
 
-/*
-var
-	passHorizontal= " -H+*PTD",
-	passVertical= " |H+*PTD",
-	support= "G-H0123456789",
-	hold= "H",
-	allowReview= " HPT+*"
-;
-*/
 
 
 

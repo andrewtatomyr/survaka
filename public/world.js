@@ -146,13 +146,13 @@ function choose(n) {
 					for (var key in others) {
 						//if ( $('#c'+others[key].y+'-'+others[key].x).text()!=="?" ) {
 						if ( $('#c'+others[key].y+'-'+(others[key].x-S.x+dispX)).text()!=="?" ) {
-							$('#c'+others[key].y+'-'+(others[key].x-S.x+dispX)).html( others[key].face + "<sup>"+others[key].tool+"</sup>" ); //o
+							$('#c'+others[key].y+'-'+(others[key].x-S.x+dispX)).html( "<span class=others>"+others[key].face + "<sup>"+others[key].tool+"</sup></span>" ); //o
 							//$('#c'+others[key].y+'-'+others[key].x).html( others[key].face + "<sup>"+others[key].tool+"</sup>" ); //o
 						}
 					}
 
 					//and at last put self ☻:
-					$('#c'+S.y+'-'+dispX).html( S.face + "<sup>"+S.I[S.I[0]]+"</sup>" );
+					$('#c'+S.y+'-'+dispX).html( "<span id=self>"+S.face + "<sup>"+S.I[S.I[0]]+"</sup></span>" );
 					//$('#c'+S.y+'-'+S.x).html( S.face + "<sup>"+S.I[S.I[0]]+"</sup>" );
 					$("#coordinates").text(S.x+"|"+S.y);
 

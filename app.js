@@ -22,7 +22,7 @@ var fs= require('fs');
 //var
 	//H= 10, //->chunks
 	//W= 10, //->chunks
-tick= 500;
+tick= 400;
 t= 7*60*1000;
 
 /*var*/ //O= JSON.parse(fs.readFileSync('O.txt'));
@@ -225,7 +225,7 @@ app.post('/api/refresh', function(req,res) { //refresh situation
 				&& ( things[ O[rel.q][S.y][rel.J] ].space || things[ O[rel.q][S.y][rel.J] ].verticalDoor || things[ O[rel.q][S.y][rel.J] ].horizontalDoor )
 			)
 		)
-		&& !S.justFell
+		&& !S.justFell //it prevents suspension
 	) {
 		S.y+= S.dy;
 	}
@@ -470,6 +470,17 @@ setInterval(function() {
 					//grow up
 					O[q][i][j]= (Math.random()<0.5)? "*": "@";
 					console.log(q,"grow up",	O[q][i][j],j,i);//x
+				} else if (
+					O[q][i+1][j]==="@"
+					&& i>2
+					&& (
+						O[_left.q][i+1][_left.J]==="Y" || O[_left.q][i+1][_left.J]==="@"
+						|| O[_right.q][i+1][_right.J]==="Y" || O[_right.q][i+1][_right.J]==="@"
+					)
+				) {
+					//grow up
+					O[q][i][j]= (Math.random()<0.7)? "@": "*";
+					console.log(q,"grow up",	O[q][i][j],j,i);//x
 				}
 
 			}
@@ -477,7 +488,7 @@ setInterval(function() {
 
 
 			if (O[q][i][j]==="@") { // @->Y
-				if (Math.random()<0.1) { //доємо  шанс засохнути
+				if (Math.random()<0.01) { //доємо  шанс засохнути
 					O[q][i][j]= "/";
 				} else if (
 					(O[q][i-1][j]==="G" || O[q][i-1][j]==="Y")
@@ -495,6 +506,12 @@ setInterval(function() {
 					console.log(q,"shrink Y to w",j,i);//x
 					O[q][i][j]= "w";
 				}
+			}
+
+
+			if (O[q][i][j]==="*") { // '*'->' '
+				console.log(q,"banyan",j,i);//x
+				O[q][i][j]= (Math.random()<0.01)? " ": "*"; //банан згнив
 			}
 
 

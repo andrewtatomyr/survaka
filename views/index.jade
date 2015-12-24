@@ -7,9 +7,10 @@ html
 
 	body
 
-		form(action="/world")
-			input(type="text" name="sname" id="sname" placeholder="[a-z]" )
-			input(type="submit" value="start" )
+		div(style="display:inline-block;")
+			form(action="/world")
+				input(type="text" name="sname" id="sname" placeholder="[a-z]" )
+				input(type="submit" value="start in world" )
 
 		button(id="live" onclick="setNameToLive()" ) live
 
