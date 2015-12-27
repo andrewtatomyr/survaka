@@ -149,8 +149,12 @@ function choose(n) {
 
 					//put others ☻:
 					for (var key in others) {
-						if ( $('#c'+(others[key].y-S.y+S.reviewRange)+'-'+(others[key].x-S.x+S.reviewRange)).text()!=="?" ) {
-							$('#c'+(others[key].y-S.y+S.reviewRange)+'-'+(others[key].x-S.x+S.reviewRange)).html( "<span class=others>"+others[key].face + "<sup>"+others[key].tool+"</sup></span>" ); //o
+						//if ( $('#c'+(others[key].y-S.y+S.reviewRange)+'-'+(others[key].x-S.x+S.reviewRange)).text()!=="?" ) {
+						//	$('#c'+(others[key].y-S.y+S.reviewRange)+'-'+(others[key].x-S.x+S.reviewRange)).html( "<span class=others>"+others[key].face + "<sup>"+others[key].tool+"</sup></span>" ); //o
+						//}
+						if ( $("#c"+others[key].y+"-"+others[key].x)!=="?" ) {
+							$("#c"+others[key].y+"-"+others[key].x).html( "<span class=others>"+others[key].face + "<sup>"+others[key].tool+"</sup></span>" ); //o
+							console.log();
 						}
 					}
 

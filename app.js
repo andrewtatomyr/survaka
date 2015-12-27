@@ -388,8 +388,8 @@ app.post('/api/refresh', function(req,res) { //refresh situation
 
 			others[key]= {
 				"face": S_other.face,
-				"y": S_other.y,
-				"x": S_other.x,
+				"y": S_other.y-S.y+S.reviewRange,
+				"x": (S_other.x-S.x+S.reviewRange +Q*W)%(Q*W), //correction of zero-transition error
 				"tool": S_other.I[S_other.I[0]]
 
 			}
@@ -471,6 +471,14 @@ setInterval(function() {
 
 
 			//-----------------------p-y-r-o-t-e-c-h-n-i-k-s-------------------------)
+
+			//-----------------------h-d-r-o-l-i-k-s---------------------------------(
+
+			//"~"
+
+
+			//-----------------------h-d-r-o-l-i-k-s---------------------------------)
+
 
 			//-------------------------b-o-t-a-n-y-----------------------------------(
 
