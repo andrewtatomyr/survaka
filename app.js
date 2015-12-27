@@ -31,10 +31,10 @@ H= O.H;
 W= O.W;
 Q= O.Q;
 console.log(O);
-var dispH= H;
-var dispW= 15;
+//var dispH= H;
+//var dispW= 15;
 
-var survivors= JSON.parse(fs.readFileSync("live.txt"));
+var survivors= JSON.parse(fs.readFileSync("online.txt"));
 console.log(survivors);
 
 
@@ -47,8 +47,12 @@ app.get('/', function (req, res) { //start
 });
 
 app.get('/world', function (req, res) { //start
-
-	res.render('world.jade', { dispH: dispH, dispW: dispW});
+	var sname = url.parse(req.url, true).query.sname;
+	console.log("start in world | sname: ", sname);//x
+	S= JSON.parse(fs.readFileSync("S-"+sname+".txt"));
+	console.log("R=",S.reviewRange); //x
+	//res.render('world.jade', { dispH: dispH, dispW: dispW});
+	res.render('world.jade', { reviewRange: S.reviewRange });
 });
 
 app.get('/live', function (req, res) { //start
@@ -59,7 +63,7 @@ app.get('/live', function (req, res) { //start
 
 app.get('/api/start-param', function(req,res) { //забрати нафіг!
 	var sname = url.parse(req.url, true).query.sname;
-	console.log("start | sname: ", sname);//x
+	console.log("start refresh | sname: ", sname);//x
 	S= JSON.parse(fs.readFileSync("S-"+sname+".txt"));
 	console.log(S); //x
 
@@ -67,7 +71,7 @@ app.get('/api/start-param', function(req,res) { //забрати нафіг!
 	//O= JSON.parse(fs.readFileSync("O.txt"));
 	//var O= JSON.parse(fs.readFileSync("chunks.txt"));//!?
 
-	res.json({  dispH,  dispW,  tick/*, O: O, S: S*/,S });//?
+	res.json({ /* dispH,  dispW,*/  tick/*, O: O, S: S*/,S });//?
 });
 
 
@@ -121,7 +125,8 @@ function selfAction(n,sname) {
 	switch (tool) {
 		//eat
 		case "*": tool_= " "; S.fullness+= things[tool].energyValue; break;
-		case "*inTeeth": tool_= "teeth"; S.fullness+= things[tool].energyValue; break;
+		case "*Δ": tool_= "Δ"; S.fullness+= things[tool].energyValue; break;
+		case "@Δ": tool_= "Δ"; S.fullness+= things[tool].energyValue; break;
 
 		default: ;
 
@@ -258,7 +263,7 @@ app.post('/api/refresh', function(req,res) { //refresh situation
 
 	//---------------------------a-c-t-i-o-n---m-a-s-k---------------------------(
 
-
+	/*
 	//var allowAction= " H"; //' -|H'; //! //таки дозволю ламати ,,закриті'' блоки по діагоналі- по аналогії як у reviewMask
 	var actionMask= '['+(S.y)+'|'+(S.x-1)+']'
 		+'['+(S.y)+'|'+(S.x+1)+']'
@@ -272,6 +277,16 @@ app.post('/api/refresh', function(req,res) { //refresh situation
 		actionMask+= '['+(S.y+1)+'|'+(S.x-1)+']';
 	//if ( allowAction.indexOf(O[S.y][S.x+1])>-1 || allowAction.indexOf(O[S.y+1][S.x])>-1 )
 		actionMask+= '['+(S.y+1)+'|'+(S.x+1)+']';
+	*/
+	var actionMask= "["+(S.reviewRange)+"|"+(S.reviewRange+1)+"]"
+		+"["+(S.reviewRange+1)+"|"+(S.reviewRange+1)+"]"
+		+"["+(S.reviewRange+1)+"|"+(S.reviewRange)+"]"
+		+"["+(S.reviewRange+1)+"|"+(S.reviewRange-1)+"]"
+		+"["+(S.reviewRange)+"|"+(S.reviewRange-1)+"]"
+		+"["+(S.reviewRange-1)+"|"+(S.reviewRange-1)+"]"
+		+"["+(S.reviewRange-1)+"|"+(S.reviewRange)+"]"
+		+"["+(S.reviewRange-1)+"|"+(S.reviewRange+1)+"]"
+	;
 	//---------------------------a-c-t-i-o-n---m-a-s-k---------------------------)
 
 
@@ -329,6 +344,24 @@ app.post('/api/refresh', function(req,res) { //refresh situation
 
 	}
 	*/
+	S.eyeshot= {};
+	for (var i= 0; i<=S.reviewRange*2; i++) {
+		var temp_i= {};
+		for (var j= 0; j<=S.reviewRange*2; j++) {
+
+			var rel= relative(S.x-S.reviewRange+j,W,Q);
+			//console.log( rel.J , S.y-S.reviewRange+i , O[rel.q][S.y-S.reviewRange+i][rel.J] );//x
+			//temp_i[j]= O[rel.q][S.y-S.reviewRange+i][rel.J]? O[rel.q][S.y-S.reviewRange+i][rel.J]:
+			if ( S.y-S.reviewRange+i<0 || S.y-S.reviewRange+i>=H ) {
+				temp_i[j]= "∞";
+			} else {
+				temp_i[j]= O[rel.q][S.y-S.reviewRange+i][rel.J];
+			}
+		}
+		//console.log(temp_i);//x
+		S.eyeshot[i]= temp_i;
+	}
+	//console.log(S.eyeshot);//x
 	//---------------------------r-e-v-i-e-w---m-a-s-k---------------------------)
 
 
@@ -339,10 +372,10 @@ app.post('/api/refresh', function(req,res) { //refresh situation
 	//-------------------------o-t-h-e-r-s-&-o-n-l-i-n-e-------------------------(
 
 
-	var survivors= JSON.parse(fs.readFileSync("live.txt")); //S= JSON.parse(fs.readFileSync('S.txt'));
+	var survivors= JSON.parse(fs.readFileSync("online.txt")); //S= JSON.parse(fs.readFileSync('S.txt'));
 
 	survivors[sname]= 10; //задаємо маркер присутності (він з кожним тиком буде зменшуватися)
-	fs.writeFileSync('live.txt', JSON.stringify(survivors)); //зберігаємо маркер соєї присутності
+	fs.writeFileSync('online.txt', JSON.stringify(survivors)); //зберігаємо маркер соєї присутності
 
 	var others= {}; //інші виживаки
 	for (var key in survivors) { //перебираємо інших виживак
@@ -374,7 +407,7 @@ app.post('/api/refresh', function(req,res) { //refresh situation
 	S.dFullness= S.fullness-oldS.fullness;
 
 
-	res.json({      O,  S,  actionMask,  reviewMask,  others,  t });
+	res.json({     /* O, */ S,  actionMask,  /*reviewMask,*/ others,  t });
 
 	//----------------------------------f-a-l-l----------------------------------(
 
@@ -390,7 +423,7 @@ app.post('/api/refresh', function(req,res) { //refresh situation
 	} else {
 		console.log(sname,": ","fall down" );//x
 		S.y--;
-		S.justFell= 1; //задаємо флаг падіння
+		S.justFell= 1; //задаємо флаг падіння (так S стрибає красивіше)
 	}
 
 	//-----------------------------------f-a-l-l---------------------------------)
@@ -412,14 +445,14 @@ setInterval(function() {
 	t+= tick;
 
 
-	var survivors= JSON.parse(fs.readFileSync("live.txt")); //S= JSON.parse(fs.readFileSync('S.txt'));
+	var survivors= JSON.parse(fs.readFileSync("online.txt")); //S= JSON.parse(fs.readFileSync('S.txt'));
 	var survivorsCount= 0;
 	for (var key in survivors) {
 		survivors[key]--;
 		if (survivors[key]<0) survivors[key]= 0;
 		survivorsCount+= (survivors[key]>0)? 1: 0;
 	}
-	fs.writeFileSync('live.txt', JSON.stringify(survivors)); //записуємо нові значення онлайну
+	fs.writeFileSync('online.txt', JSON.stringify(survivors)); //записуємо нові значення онлайну
 
 	/* World background processing */
 	if (survivorsCount) {//if at least one S is active

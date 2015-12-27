@@ -14,8 +14,8 @@ var things= {
 		"@": [1,"@"," "],
 
 
-		"*inTeeth": [1,"*","teeth"],
-		"@inTeeth": [1,"@","teeth"],
+		"*Δ": [1,"*","Δ"],
+		"@Δ": [1,"@","Δ"],
 
 		//"&": [0.3,"&"," "],
 
@@ -192,9 +192,10 @@ var things= {
 
 		//"P": [1," ","P"],
 		//"/": [0.5," ","/"],
+		"Δ": [1," ","@Δ"],
 		" ": [1," ","@"]
 	},
-	"@inTeeth": {
+	"@Δ": {
 		name: "banyan leaves (a plenty of leaf) in animal teeth",
 		//flat: 1,
 		//adhesive: { "@": 0.9999, "Y": 0.9999 },
@@ -212,10 +213,10 @@ var things= {
 		adhesive: { "@": 0.9995 },
 		energyValue: 10,
 
-		"teeth": [1," ","*inTeeth"],
+		"Δ": [1," ","*Δ"],
 		" ": [1," ","*"]
 	},
-	"*inTeeth": {
+	"*Δ": {
 		name: "banyan in animal teeth",
 		//flat: 1, //spase: 1, //?
 		//adhesive: { "@": 0.9995 },

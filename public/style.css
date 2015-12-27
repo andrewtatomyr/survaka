@@ -17,16 +17,14 @@ body {
   margin: 5px;
 }
 
-table.shell {
-  border: 1px solid white;
-}
 
 td {
   text-align: center;
   vertical-align: middle;
-  width: 30px;
-  height: 30px;
+  width: 40px;
+  height: 40px;
   cursor: default;
+  padding: 0px;
 }
 
 #health {

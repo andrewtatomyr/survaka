@@ -1,1 +1,1 @@
-{"face":"☃","y":3,"x":18,"dy":0,"dx":0,"health":100,"fullness":83.84017007534324,"I":[1,"teeth"],"manipulate":"","selfAction":"","q":1,"justFell":0,"dHealth":0,"dFullness":0,"reviewRange":1}
+{"face":"☃","y":3,"x":22,"dy":0,"dx":0,"health":100,"fullness":79.48716459152104,"I":[1,"*Δ"],"manipulate":"","selfAction":"","q":2,"justFell":0,"dHealth":0,"dFullness":0,"reviewRange":1,"eyeshot":{"0":{"0":" ","1":"*","2":"*"},"1":{"0":"@","1":" ","2":"/"},"2":{"0":"*","1":" ","2":"*"}}}

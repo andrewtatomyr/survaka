@@ -2,16 +2,14 @@
 
 //------------------------------o-n---r-e-a-d-y--------------------------------(
 (function() {
-	console.log('start live');
-
 	var sname= getUrlVars().sname; //витягуємо змінну з url
 
 	console.log('live | sname: '+sname);
 
 	$.getJSON('/api/start-param/?sname='+sname, function(initData) {//це мусить тут бути. фактично, це ініціалізація входу суб'єкта S
 		S= initData.S;
-		dispH= initData.dispH;
-		dispW= initData.dispW;
+		//dispH= initData.dispH;
+		//dispW= initData.dispW;
 
 		tick= initData.tick;
 		//tick= 1000;//x
@@ -35,13 +33,13 @@
 				},
 				success: function(data) {
 					//get data:
-					O= data.O;
-					Q= O.Q;
-					H= O.H;
-					W= O.W;
+					//O= data.O;
+					//Q= O.Q;
+					//H= O.H;
+					//W= O.W;
 					S= data.S;
 					var actionMask= data.actionMask;
-					var reviewMask= data.reviewMask;
+					//var reviewMask= data.reviewMask;
 					var others= data.others; //o
 					t= data.t;
 					//dispH
