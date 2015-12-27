@@ -87,14 +87,14 @@ for (var s= 0; s<2*squared.PI*(rrr); s++) { //прохдимо по дузі
 var things= require("./things.js");
 console.log(things);//x
 
-function manipulate(i,j,n) {
+function manipulate(i,j,n,sname) {
 
 	var rel= relative(j,W,Q); //!
-	console.log(j+"|"+i+": ["+S.I[n]+"] -> ["+O[rel.q][i][rel.J]+"]");//x
+	console.log(sname,": ",j+"|"+i+": ["+S.I[n]+"] -> ["+O[rel.q][i][rel.J]+"]");//x
 
 	var thing= things[ O[rel.q][i][rel.J] ], tool= S.I[n];
 	if ( tool in thing ) {
-		console.log("p="+thing[tool][0]);//x
+		console.log(sname,": ","p="+thing[tool][0]);//x
 
 		if ( Math.random()<thing[tool][0] ) {
 			O[rel.q][i][rel.J]= thing[tool][1]; //thing[tool].inWorld;
@@ -112,15 +112,16 @@ function manipulate(i,j,n) {
 
 
 
-function selfAction(n) {
+function selfAction(n,sname) {
 
 
 	var tool= S.I[n];
-	console.log("self: ",tool);//x
+	console.log(sname,": self: ",tool);//x
 	var tool_ =tool;
 	switch (tool) {
 		//eat
-		case "*": tool_=" "; S.fullness+=30; /*if (S.fullness>100) S.fullness= 100;*/ break;
+		case "*": tool_= " "; S.fullness+= things[tool].energyValue; break;
+		case "*inTeeth": tool_= "teeth"; S.fullness+= things[tool].energyValue; break;
 
 		default: ;
 
@@ -189,14 +190,16 @@ app.post('/api/refresh', function(req,res) { //refresh situation
 	S.dx= 1*req.body.dx;
 	S.I[0]= 1*req.body.n;
 
+	oldS= S; //old
+
 	O= JSON.parse(fs.readFileSync("chunks.txt")); //зчитуємо світ
 
 	if (req.body.cell) { //manipulate
-		manipulate( req.body.cell.i , req.body.cell.j , S.I[0] );
+		manipulate( req.body.cell.i , req.body.cell.j , S.I[0] , sname );
 	}
 
 	if (req.body.selfAction) { //self action
-		selfAction( S.I[0] );
+		selfAction( S.I[0] , sname );
 	}
 
 	healhAndFullness();
@@ -242,7 +245,7 @@ app.post('/api/refresh', function(req,res) { //refresh situation
 		//S.x+= S.dx;
 	}
 
-	if ( S.dx || S.dy ) console.log("q:",S.q,"dy:",S.dy,"dx:",S.dx);//x
+	if ( S.dx || S.dy ) console.log(sname,": ","dy:",S.dy,"dx:",S.dx," (q="+S.q+")");//x
 	//at last:
 	S.dy= 0;
 	S.dx= 0;
@@ -274,10 +277,9 @@ app.post('/api/refresh', function(req,res) { //refresh situation
 
 	//---------------------------r-e-v-i-e-w---m-a-s-k---------------------------(
 
-	//var allowReview= ' HPTD+*hg'; //!
-	var reviewRange= 9;//yet
+	//var reviewRange= 9;//це буде задаватися нейронною моделлю в S-sname або A-aname
 
-	var reviewMask= actionMask;
+	var reviewMask= actionMask; //це той мінімум, який обов'язково повинен бачити суб'єкт - 8 клітинок навколо себе
 	/* оптика //потім доробити. можливо, навіть зробити як я думав - видимість як замкнута фігура.
 
 	for (var s= 0; s<2*squared.PI*reviewRange; s++) { //прохдимо по дузі
@@ -368,6 +370,10 @@ app.post('/api/refresh', function(req,res) { //refresh situation
 
 	//console.log( Math.round(t/1000) );//x
 
+	S.dHealth= S.health-oldS.health;
+	S.dFullness= S.fullness-oldS.fullness;
+
+
 	res.json({      O,  S,  actionMask,  reviewMask,  others,  t });
 
 	//----------------------------------f-a-l-l----------------------------------(
@@ -382,7 +388,7 @@ app.post('/api/refresh', function(req,res) { //refresh situation
 		//nop
 		S.justFell= 0; //очищаємо флаг падіння
 	} else {
-		console.log("fall down" );//x
+		console.log(sname,": ","fall down" );//x
 		S.y--;
 		S.justFell= 1; //задаємо флаг падіння
 	}
@@ -510,8 +516,8 @@ setInterval(function() {
 
 
 			if (O[q][i][j]==="*") { // '*'->' '
-				console.log(q,"banyan",j,i);//x
-				O[q][i][j]= (Math.random()<0.01)? " ": "*"; //банан згнив
+				//console.log(q,"banyan",j,i);//x
+				O[q][i][j]= (Math.random()<0.03)? " ": "*"; //банан згнив
 			}
 
 

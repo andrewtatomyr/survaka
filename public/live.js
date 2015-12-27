@@ -9,7 +9,7 @@
 	console.log('live | sname: '+sname);
 
 	$.getJSON('/api/start-param/?sname='+sname, function(initData) {//це мусить тут бути. фактично, це ініціалізація входу суб'єкта S
-		S= initData.S; //? //суб'єкт ... як їх зробити множинними? щоб могло ,,жити'' декілька одночасно...
+		S= initData.S;
 		dispH= initData.dispH;
 		dispW= initData.dispW;
 
@@ -84,7 +84,6 @@
 
 					//put others ☻:
 					for (var key in others) {
-						//if ( $('#c'+others[key].y+'-'+others[key].x).text()!=="?" ) {
 						if ( $('#c'+others[key].y+'-'+(others[key].x-S.x+dispX)).text()!=="?" ) {
 							$('#c'+others[key].y+'-'+(others[key].x-S.x+dispX)).html( others[key].face + "<sup>"+others[key].tool+"</sup>" ); //o
 							//$('#c'+others[key].y+'-'+others[key].x).html( others[key].face + "<sup>"+others[key].tool+"</sup>" ); //o
@@ -149,6 +148,39 @@
 					}
 					$(".shell").css({backgroundColor: skyTimer[dayTime]});
 					//if (S.I[S.I[0]]==="⊥") $(".active").css({backgroundColor: "yellow"});*/
+
+
+
+
+
+					//---------------------------A-I-------------------------------------(
+
+					//var w0= 0.1, w1= 1;//x
+					//var S.L= w0*S.health + w1*S.dHealth;
+
+
+
+					//synaptic??
+					//S.dx= Math.sign(Math.round( (Math.random()-0.5)*1.1 ));
+
+
+					//"neural network":
+					//neural(S,)
+
+
+					//p["left"]=
+
+
+					//if ( Math.random()<p["left"] )
+
+
+
+					//---------------------------A-I-------------------------------------)
+
+
+
+
+
 				}
 			});
 

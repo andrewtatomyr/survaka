@@ -13,6 +13,10 @@ var things= {
 		"w": [1,"W"," "],
 		"@": [1,"@"," "],
 
+
+		"*inTeeth": [1,"*","teeth"],
+		"@inTeeth": [1,"@","teeth"],
+
 		//"&": [0.3,"&"," "],
 
 		"P": [1,"P"," "],
@@ -51,7 +55,6 @@ var things= {
 		"*": [1,"&","?"],
 		"w": [1,"&","&"],
 		"@": [1,"&"," "],
-
 
 		"P": [1,"&"," "],
 		"T": [1,"&"," "],
@@ -117,34 +120,15 @@ var things= {
 		//adhesive: { },
 
 
-		"T": [0.5,"r","D"],
+		"T": [0.5,"r","T"],
 		"D": [0.1," "," "],
 		"/": [0.1,"r"," "]
 	},
-	"g": {
+	"r": {
 		name: "piece of rock",
 		flat: 1,
 
 		" ": [1," ","r"]
-	},
-	"W": {
-		name: "wood plank",
-		volumetric: 1,
-		fixed: 1,
-
-		//"&": [0.3,"&"," "],
-
-		"P": [1,"w","P"],
-		"/": [0.5,"w","/"],
-		"&": [1,"&"," "],
-		" ": [0.2," ","w"]
-	},
-	"w": {
-		name: "uninstalled wood plank",
-		flat: 1,
-
-		"&": [1,"&"," "],
-		" ": [1," ","w"]
 	},
 	"H": {
 		name: "ladder",
@@ -171,19 +155,21 @@ var things= {
 		verticalDoor: 1,
 		fixed: 1, //?
 
-		"P": [1,"+","P"],
-		"/": [0.5,"+","/"],
+		"P": [0.3,"+","P"],
+		"/": [0.1,"+","/"],
 
 		"T": [0.1," ","T"], //x
-		" ": [1,"-"," "]
+		" ": [1,"-"," "] //? maybe it`s needed a key? somethigs like a password to open for each player. but how to know who is the owner of this door? :) looks like it`s need to have an some kind of LOCK at least at one side (outer) of door
 	},
+	//"lock:key" : {  },
+	//":key" : {  },
 	"-": {
 		name: "horizontal door",
 		horizontalDoor: 1,
 		fixed: 1, //?
 
-		"P": [1,"+","P"],
-		"/": [0.5,"+","/"],
+		"P": [0.3,"+","P"],
+		"/": [0.1,"+","/"],
 
 		"T": [0.1," ","T"], //x
 		" ": [1,"|"," "]
@@ -194,12 +180,13 @@ var things= {
 
 		" ": [1," ","+"]
 	},
-	//live:
+
+	//botany:
 	"@": {
 		name: "banyan leaves (a plenty of leaf)",
 		flat: 1,
 		adhesive: { "@": 0.9999, "Y": 0.9999 },
-		energyValue: { animal: 20 },
+		energyValue: 20,
 
 		live: { "gener": "Y??????", "generic": "*" }, //?????????
 
@@ -207,13 +194,35 @@ var things= {
 		//"/": [0.5," ","/"],
 		" ": [1," ","@"]
 	},
+	"@inTeeth": {
+		name: "banyan leaves (a plenty of leaf) in animal teeth",
+		//flat: 1,
+		//adhesive: { "@": 0.9999, "Y": 0.9999 },
+		energyValue: 20,
+
+		//live: { "gener": "Y??????", "generic": "*" }, //?????????
+
+		//"P": [1," ","P"],
+		//"/": [0.5," ","/"],
+		//" ": [1,"@","teeth"]
+	},
 	"*": {
 		name: "banyan",
-		flat: 1,
+		flat: 1, //spase: 1, //?
 		adhesive: { "@": 0.9995 },
-		energyValue: { human: 15, animal: 30 },
+		energyValue: 10,
 
+		"teeth": [1," ","*inTeeth"],
 		" ": [1," ","*"]
+	},
+	"*inTeeth": {
+		name: "banyan in animal teeth",
+		//flat: 1, //spase: 1, //?
+		//adhesive: { "@": 0.9995 },
+		energyValue: 30,
+
+		//"teeth": [1," ","*inTeeth"],
+		//" ": [1,"*","teeth"]
 	},
 	"Y": {
 		name: "banyan three",
@@ -227,6 +236,25 @@ var things= {
 		"P": [1,"w","P"],
 		"/": [0.5,"w","/"],
 		" ": [0.2," ","w"]
+	},
+	"W": {
+		name: "wood plank",
+		volumetric: 1,
+		fixed: 1,
+
+		//"&": [0.3,"&"," "],
+
+		"P": [1,"w","P"],
+		"/": [0.5,"w","/"],
+		"&": [1,"&"," "],
+		" ": [0.2," ","w"]
+	},
+	"w": {
+		name: "uninstalled wood plank",
+		flat: 1,
+
+		"&": [1,"&"," "],
+		" ": [1," ","w"]
 	},
 
 
