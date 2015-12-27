@@ -5,6 +5,10 @@ var things= {
 		space: 1,
 
 		"+": [1,"|"," "],
+		"o:1": [1,"O:1"," "],
+
+
+
 		"g": [1,"G"," "],
 		"r": [1,"R"," "],
 
@@ -149,7 +153,7 @@ var things= {
 		" ": [1," ","h"]
 	},
 
-	//door:
+	//doors:
 	"|": {
 		name: "vertical door",
 		verticalDoor: 1,
@@ -180,12 +184,38 @@ var things= {
 
 		" ": [1," ","+"]
 	},
+	"L:1": {
+		name: "locked door",
+		volumetric: 1,
+
+		//"P": [0.05,"o","P"], //?
+		":1": [1,"O:1",":1"]
+	},
+	"O:1": {
+		name: "opened door",
+		flat: 1,
+
+		"P": [0.05,"o","P"],
+		":1": [1,"L:1",":1"]
+	},
+	"o:1": {
+		name: "opened door",
+		flat: 1,
+
+		" ": [1," ","o:1"]
+	},
+	":1": {
+		name: "key#1",
+		flat: 1,
+
+	},
+
 
 	//botany:
 	"@": {
 		name: "banyan leaves (a plenty of leaf)",
-		flat: 1,
-		adhesive: { "@": 0.9999, "Y": 0.9999 },
+		volumetric: 1, //flat: 1,
+		adhesive: { "@": 0.99999, "Y": 0.99999 },
 		energyValue: 20,
 
 		live: { "gener": "Y??????", "generic": "*" }, //?????????
@@ -209,8 +239,8 @@ var things= {
 	},
 	"*": {
 		name: "banyan",
-		flat: 1, //spase: 1, //?
-		adhesive: { "@": 0.9995 },
+		flat: 1, // НЕ space!
+		adhesive: { "@": 0.9999 },
 		energyValue: 10,
 
 		"Δ": [1," ","*Δ"],

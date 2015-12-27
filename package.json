@@ -1,6 +1,6 @@
 {
   "name": "survaka",
-  "version": "0.0.25",
+  "version": "0.0.27",
   "description": "survival sandbox",
   "main": "app.js",
   "scripts": {
