@@ -22,7 +22,7 @@ var fs= require('fs');
 //var
 	//H= 10, //->chunks
 	//W= 10, //->chunks
-tick= 400;
+tick= 250;
 t= 7*60*1000;
 
 /*var*/ //O= JSON.parse(fs.readFileSync('O.txt'));
@@ -483,7 +483,78 @@ setInterval(function() {
 			//-------------------------b-o-t-a-n-y-----------------------------------(
 
 			var i= Math.floor( 1 + Math.random()*(H-2) ), j= Math.floor(Math.random()*W);//? поіде для біології
+			var _left= relative(q*W+j-1,W,Q), _right= relative(q*W+j+1,W,Q);
+			var rnd= Math.random();
+			var pB= 0.5; //0.1
 
+			switch ( O[q][i][j] ) {
+
+				case " ": // " " -> @ || *
+					if ( O[q][i-1][j]==="Y"
+						|| O[_left.q][i][_left.J]==="Y" && O[_left.q][i-1][_left.J]==="Y"
+						|| O[_right.q][i][_right.J]==="Y" && O[_right.q][i-1][_right.J]==="Y"
+					) {
+						O[q][i][j]= rnd<pB? "@": " ";
+						console.log("Botany: ' '->@");//x
+					}
+					if ( O[q][i-1][j]==="@" || O[_left.q][i][_left.J]==="@" || O[_right.q][i][_right.J]==="@" ) { //?
+						O[q][i][j]= rnd<pB? "*": " ";
+						console.log("Botany: ' '->*");//x
+					}
+					break;
+
+				case "@": // @ -> Y || /
+					if ( O[q][i-1][j]==="Y" || O[q][i-1][j]==="G" || O[_right.q][i][_right.J]==="Y" || O[_left.q][i][_left.J]==="Y" ) {
+						O[q][i][j]= rnd<pB? "Y":  "@";
+					} else if (O[q][i-1][j]!=="G") {
+						O[q][i][j]= "/"
+					}
+
+					console.log("Botany: @->Y,/");//x
+					break;
+
+				case "Y": //Y -> w
+					if (
+						(
+							O[q][i-1][j]==="Y" || O[q][i-1][j]==="G"
+							|| O[_right.q][i][_right.J]==="Y" && O[_right.q][i-1][_right.J]==="Y" && O[_left.q][i][_left.J]!==" "
+							|| O[_left.q][i][_left.J]==="Y" && O[_left.q][i-1][_left.J]==="Y" && O[_right.q][i][_right.J]!==" "
+						)
+						&& O[q][i+1][j]===" "
+					) {  // Y -> w
+						//O[q][i][j]= rnd<pB? "w":  "Y";
+					} else {
+						O[q][i][j]= "w";
+					}
+					console.log("Botany: Y->w");//x
+					break;
+
+				case "*": //* -> ' '
+					if ( O[q][i-1][j]==="@"
+						|| O[_right.q][i][_right.J]==="@"
+						|| O[_left.q][i][_left.J]==="@"
+					) {  // Y -> w
+						//O[q][i][j]= rnd<pB? "w":  "Y";
+					} else {
+						O[q][i][j]= rnd<pB? " ":  "*";
+					}
+					console.log("Botany: *->' '");//x
+					break;
+
+				case "w": //w -> ' '
+					if ( O[q][i-1][j]==="G" ) {
+						O[q][i][j]= rnd<pB? " ":  "w";
+					}
+					console.log("Botany: w->' '");//x
+					break;
+
+				default:
+
+			}
+
+
+
+			/*
 			//var thing= things[ O[q][i][j] ];
 			if (O[q][i][j]===" ") { // " "-> @ or *
 				var _left= relative(q*W+j-1,W,Q), _right= relative(q*W+j+1,W,Q);
@@ -560,7 +631,7 @@ setInterval(function() {
 				//console.log(q,"banyan",j,i);//x
 				O[q][i][j]= (Math.random()<0.03)? " ": "*"; //банан згнив
 			}
-
+			*/
 
 			//-------------------------b-o-t-a-n-y-----------------------------------)
 

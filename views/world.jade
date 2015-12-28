@@ -10,24 +10,29 @@ html
 
 	body(onkeyup="actionHandler(event)"  )
 
-		div()
-			table( cellspacing=0 class="shell" border=1 style="border-color:lightgrey; border-collapse:collapse;" )
-				- for (var i=reviewRange*2; i>=0; i--) {
-					tr
-						- for (var j=0; j<=reviewRange*2; j++) {
-							td(id="c"+i+"-"+j onclick="manipulate({ i:"+i+", j:"+j+" }, this)" )
+
+		table( style="width:100%;" )
+			tr
+				td(  )
+
+					table( cellspacing=0 class="shell" border=1 style="border-color:lightgrey; border-collapse:collapse;" )
+						- for (var i=reviewRange*2; i>=0; i--) {
+							tr
+								- for (var j=0; j<=reviewRange*2; j++) {
+									td(id="c"+i+"-"+j onclick="manipulate({ i:"+i+", j:"+j+" }, this)" )
+								- }
 						- }
-				- }
+				td(  )
 
-			span(id="health")
-			span(id="fullness")
-			span(id="tick")
-			span(id="t")
-			span(id="coordinates")
-			span!= reviewRange
+					table( cellspacing=1  border=1 class="inventory" )
+						- for (var n=1; n<=9; n++) {
+							tr
+								td(id="inv"+n onclick="choose("+n+")" class="active" ) $
+						- }
 
-			table( cellspacing=1  border=1 class="inventory" )
-				tr
-					- for (var n=1; n<=9; n++) {
-						td(id="inv"+n onclick="choose("+n+")" class="active" ) $
-					- }
+		span(id="health")
+		span(id="fullness")
+		span(id="tick")
+		span(id="t")
+		span(id="coordinates")
+		span!= reviewRange

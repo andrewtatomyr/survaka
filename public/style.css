@@ -17,6 +17,20 @@ body {
   margin: 5px;
 }
 
+td#eyeshot {
+  text-align: right;
+
+  vertical-align: middle;
+
+}
+
+td#inventory {
+  text-align: left;
+  
+  vertical-align: middle;
+
+}
+
 
 td {
   text-align: center;

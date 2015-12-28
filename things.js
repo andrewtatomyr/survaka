@@ -5,7 +5,8 @@ var things= {
 		space: 1,
 
 		"+": [1,"|"," "],
-		"o:1": [1,"O:1"," "],
+		"d:1": [1,"O:1"," "],
+		":1": [1,":1"," "],
 
 
 
@@ -185,29 +186,30 @@ var things= {
 		" ": [1," ","+"]
 	},
 	"L:1": {
-		name: "locked door",
+		name: "locked door#1",
 		volumetric: 1,
 
 		//"P": [0.05,"o","P"], //?
 		":1": [1,"O:1",":1"]
 	},
 	"O:1": {
-		name: "opened door",
+		name: "opened door#1",
 		flat: 1,
 
-		"P": [0.05,"o","P"],
+		"P": [1,"d:1","P"],
 		":1": [1,"L:1",":1"]
 	},
-	"o:1": {
-		name: "opened door",
+	"d:1": {
+		name: "uninstalled door#1",
 		flat: 1,
 
-		" ": [1," ","o:1"]
+		" ": [1," ","d:1"]
 	},
 	":1": {
 		name: "key#1",
 		flat: 1,
 
+		" ": [1," ",":1"]
 	},
 
 
@@ -215,7 +217,7 @@ var things= {
 	"@": {
 		name: "banyan leaves (a plenty of leaf)",
 		volumetric: 1, //flat: 1,
-		adhesive: { "@": 0.99999, "Y": 0.99999 },
+		adhesive: { "@": 0.999999, "Y": 0.999999 },
 		energyValue: 20,
 
 		live: { "gener": "Y??????", "generic": "*" }, //?????????
@@ -258,6 +260,7 @@ var things= {
 	"Y": {
 		name: "banyan three",
 		flat: 1,
+		adhesive: { "Y": 1 },
 		energyValue: { animal: 15 },
 
 		live: { "geners": "W", "generic": "b" }, //?????????
