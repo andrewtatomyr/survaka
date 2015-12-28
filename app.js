@@ -517,8 +517,8 @@ setInterval(function() {
 					if (
 						(
 							O[q][i-1][j]==="Y" || O[q][i-1][j]==="G"
-							|| O[_right.q][i][_right.J]==="Y" && O[_right.q][i-1][_right.J]==="Y" && O[_left.q][i][_left.J]!==" "
-							|| O[_left.q][i][_left.J]==="Y" && O[_left.q][i-1][_left.J]==="Y" && O[_right.q][i][_right.J]!==" "
+							|| O[_right.q][i][_right.J]==="Y" && O[_right.q][i-1][_right.J]==="Y" && O[_left.q][i][_left.J]===" "
+							|| O[_left.q][i][_left.J]==="Y" && O[_left.q][i-1][_left.J]==="Y" && O[_right.q][i][_right.J]===" "
 						)
 						&& O[q][i+1][j]===" "
 					) {  // Y -> w
