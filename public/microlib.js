@@ -77,3 +77,18 @@ function scrollToElement(theElement) {
   }
   window.scrollTo(0, selectedPosY);
 }
+
+
+
+/**
+* Concatenates a number of arguments into the one resulting string
+* with a warranty that the result is certainly should be a string.
+* Also, some (or all) arguments can contain a Math operations
+* (even without parentheses)
+*/
+function str() {
+	for (var i= 0, txt= ""; i<arguments.length; i++) {
+		txt+= arguments[i];
+	}
+	return txt;
+}

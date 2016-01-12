@@ -455,7 +455,7 @@ setInterval(function() {
 	fs.writeFileSync('online.txt', JSON.stringify(survivors)); //записуємо нові значення онлайну
 
 	/* World background processing */
-	if (survivorsCount) {//if at least one S is active
+	if (survivorsCount) { //if at least one S is active
 
 		//console.log(survivorsCount);//x
 
@@ -520,7 +520,7 @@ setInterval(function() {
 							|| O[_right.q][i][_right.J]==="Y" && O[_right.q][i-1][_right.J]==="Y" && O[_left.q][i][_left.J]===" "
 							|| O[_left.q][i][_left.J]==="Y" && O[_left.q][i-1][_left.J]==="Y" && O[_right.q][i][_right.J]===" "
 						)
-						&& O[q][i+1][j]===" "
+						//&& O[q][i+1][j]===" " //для чого я це зробив?
 					) {  // Y -> w
 						//O[q][i][j]= rnd<pB? "w":  "Y";
 					} else {

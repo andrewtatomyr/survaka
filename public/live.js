@@ -159,8 +159,8 @@
 
 
 					//synaptic??
-					//S.dx= Math.sign(Math.round( (Math.random()-0.5)*1.1 ));
-
+					S.dx= Math.sign(Math.round( (Math.random()-0.5)*1.2 ));
+					S.dy= Math.sign(Math.round( (Math.random()-0.3)*1.03 ));
 
 					//"neural network":
 					//neural(S,)
